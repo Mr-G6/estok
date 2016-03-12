@@ -1,0 +1,32 @@
+.products{
+    .page-header{
+
+    }
+
+    .table{
+        font-size: 16px;
+        font-weight: 400;
+
+        th{
+            font-weight: bold;
+        }
+
+        .btn-group{
+
+            a{
+                text-decoration:none;
+            }
+        }
+
+        /*tbody{
+            tr:hover .btn-group{
+                display:block;
+                td:last-child{
+                    width: 150px;
+                }
+            }
+        }*/
+    }
+
+
+}

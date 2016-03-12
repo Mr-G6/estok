@@ -1,0 +1,22 @@
+{
+  "name": "urban-warehouse",
+  "description": "",
+  "main": "Gruntfile.js",
+  "authors": [
+    "Waleed Ahmad"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/waleedahmad/UrbanWare",
+  "moduleType": [],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.6"
+  }
+}

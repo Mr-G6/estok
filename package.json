@@ -1,0 +1,29 @@
+{
+  "name": "urban-warehouse",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Gruntfile.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/waleedahmad/UrbanWare.git"
+  },
+  "author": "Waleed Ahmad",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/waleedahmad/UrbanWare/issues"
+  },
+  "homepage": "https://github.com/waleedahmad/UrbanWare#readme",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-concat": "^1.0.0",
+    "grunt-contrib-sass": "^1.0.0",
+    "grunt-contrib-uglify": "^1.0.0",
+    "grunt-contrib-watch": "^0.6.1"
+  }
+}

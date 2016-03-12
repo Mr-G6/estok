@@ -1,2 +1,10 @@
-// @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+*{
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+}
 
+@import "dashboard";
+@import "edit_warehouse";
+@import "products";
+@import "add_product";
+@import "edit_product";

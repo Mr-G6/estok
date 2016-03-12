@@ -12,5 +12,13 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // $this->call(UserTableSeeder::class);
+        for($i=1; $i<=3; $i++){
+            DB::table('warehouses')->insert([
+                'name'      =>  'Warehouse_'.$i,
+                'location'  =>  '',
+                'owner'     =>  ''
+            ]);
+        }
+
     }
 }

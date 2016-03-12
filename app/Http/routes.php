@@ -1,31 +1,16 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Routes File
-|--------------------------------------------------------------------------
-|
-| Here is where you will register all of the routes in an application.
-| It's a breeze. Simply tell Laravel the URIs it should respond to
-| and give it the controller to call when that URI is requested.
-|
-*/
-
-Route::get('/', function () {
-    return view('welcome');
-});
-
-/*
-|--------------------------------------------------------------------------
-| Application Routes
-|--------------------------------------------------------------------------
-|
-| This route group applies the "web" middleware group to every route
-| it contains. The "web" middleware group is defined in your HTTP
-| kernel and includes session state, CSRF protection, and more.
-|
-*/
-
 Route::group(['middleware' => ['web']], function () {
-    //
+
+    Route::get('/', 'DashboardController@index');
+
+    Route::get('/warehouse/{id}/products', 'WareHouseController@index');
+    Route::get('/warehouse/edit/{id}', 'WareHouseController@editWareHouse');
+    Route::post('/warehouse/update', 'WareHouseController@updateWarehouse');
+    Route::get('/warehouse/product/exist', 'WareHouseController@productExist');
+    Route::post('/warehouse/product/add', 'WareHouseController@addProduct');
+    Route::post('/warehouse/product/update', 'WareHouseController@updateProduct');
+    Route::get('/warehouse/{id}/products/add', 'WareHouseController@newProduct');
+    Route::get('/warehouse/{wh_id}/products/delete/{id}', 'WareHouseController@deleteProduct');
+    Route::get('/warehouse/{id}/products/edit/{p_id}', 'WareHouseController@editProduct');
 });
