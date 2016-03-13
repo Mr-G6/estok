@@ -75,7 +75,7 @@
                                 </td>
 
                                 <td>
-                                    @if($warehouse->updated)
+                                    @if(isset($warehouse->updated))
                                         {{$warehouse->updated}}
                                     @else
                                         N/A
