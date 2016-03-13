@@ -56,11 +56,29 @@
                     <div class="alert alert-danger" id="p_error" role="alert"></div>
                 </div>
 
-                <input type="hidden" name="id" id="p_id" value="{{$product->id}}" value="">
-                <input type="hidden" name="id" id="w_id" value="{{$warehouse->id}}" value="">
-                <input type="hidden" name="_token" id="token" value="{{csrf_token()}}">
+                <input type="hidden"
+                       name="id"
+                       id="p_id"
+                       value="{{$product->id}}"
+                       value="">
 
-                <button type="submit"  class="btn btn-default pull-right">Update Product</button>
+                <input type="hidden"
+                       name="id"
+                       id="w_id"
+                       value="{{$warehouse->id}}"
+                       value="">
+
+                <input type="hidden"
+                       name="_token"
+                       id="token"
+                       value="{{csrf_token()}}">
+
+                <button type="submit" class="btn btn-default pull-right">
+                    <span class="glyphicon glyphicon-save" aria-hidden="true"></span> Update Product
+                </button>
+                <a class="btn btn-default pull-right" href="/warehouse/{{$warehouse->id}}/products" role="button">
+                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Cancel
+                </a>
 
             </form>
         </div>

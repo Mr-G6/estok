@@ -18,9 +18,9 @@
 
         .panel-body{
             height: 100%;
-            .btn{
+            .btn:nth-child(0),
+            .btn:nth-child(1){
                 width: 49%;
-
             }
         }
     }
@@ -32,11 +32,24 @@
 
     .glyphicon-cog{
         cursor:pointer;
-        display:none;
+        display: none;
         font-size: 20px;
+        padding: 5px;
     }
 
-    .row:hover .glyphicon-cog{
+    .glyphicon-cog:hover,
+    .glyphicon-shopping-cart:hover{
+        color:black;
+    }
+
+    .glyphicon-shopping-cart{
+        cursor:pointer;
+        font-size: 20px;
+        padding: 5px;
+    }
+
+    .row:hover .glyphicon-cog,
+    .row:hover .glyphicon-shopping-cart{
         display:block;
     }
 }

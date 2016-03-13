@@ -9,17 +9,17 @@
     <meta name="_token" content="{{csrf_token()}}">
 </head>
 <body>
-    @include('nav')
+@include('nav')
 
-    <div class="container">
-        @yield('dashboard')
-        @yield('warehouse')
-        @yield('edit_warehouse')
-        @yield('edit_product')
-    </div>
+<div class="container">
+    @yield('dashboard')
+    @yield('warehouse')
+    @yield('edit_warehouse')
+    @yield('edit_product')
+</div>
 
-    <script type="text/javascript" src="/assets/lib/jquery/dist/jquery.min.js"></script>
-    <script type="text/javascript" src="/assets/lib/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="/assets/js/app.js"></script>
+<script type="text/javascript" src="/assets/lib/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript" src="/assets/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/assets/js/app.js"></script>
 </body>
 </html>

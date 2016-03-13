@@ -7,16 +7,24 @@
 @section('dashboard')
     <div class="dashboard">
         <div class="page-header">
-            <h3>Available Warehouses<small></small></h3>
+            <h3>Available Warehouses
+                <small></small>
+            </h3>
         </div>
 
         @foreach($warehouses as $warehouse)
             <div class="row col-xs-12 col-sm-6 col-md-4 col-lg-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">
+
+                        <a class="pull-right" href="/warehouse/checkout/{{$warehouse->id}}">
+                            <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
+                        </a>
+
                         <a class="pull-right" href="/warehouse/edit/{{$warehouse->id}}">
                             <span class="glyphicon glyphicon glyphicon-cog" aria-hidden="true"></span>
                         </a>
+
                         <h4>{{$warehouse->name}}</h4>
                     </div>
                     <div class="panel-body">

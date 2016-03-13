@@ -12,7 +12,9 @@
                     <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Products
                 </button>
             </a>
-            <h3>{{$warehouse->name}} <small>{{$warehouse->location}}</small></h3>
+            <h3>{{$warehouse->name}}
+                <small>{{$warehouse->location}}</small>
+            </h3>
         </div>
 
         @if(count($products))
