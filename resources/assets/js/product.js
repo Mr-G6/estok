@@ -99,7 +99,7 @@ var Product = function () {
      * Returns Product ID
      * @returns {*}
      */
-    getProductID = function () {
+    this.getProductID = function () {
         return $.trim($("#p_id").val());
     };
 
@@ -108,6 +108,7 @@ var Product = function () {
      */
     this.clearErrors = function () {
         this.errors = [];
+        this.hideErrorDoM();
     };
 
     /**
