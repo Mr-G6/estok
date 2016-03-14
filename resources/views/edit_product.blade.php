@@ -21,24 +21,14 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="p_price">Wholesale Price </label>
+                    <label for="unit_price">Unit Price </label>
                     <input type="text"
                            class="form-control"
-                           name="p_price"
-                           id="p_price"
-                           value="{{$product->price}}"
-                           placeholder="Product Wholesale Price"
+                           name="unit_price"
+                           id="unit_price"
+                           value="{{$product->unit_price}}"
+                           placeholder="Unit Price"
                            required>
-                </div>
-
-                <div class="form-group">
-                    <label for="p_price">Retail Price </label>
-                    <input type="text"
-                           class="form-control"
-                           name="p_r_price"
-                           id="p_r_price"
-                           value="{{$product->retail_price}}"
-                           placeholder="Product Retail Price" required>
                 </div>
 
                 <div class="form-group">

@@ -16,8 +16,7 @@ class AddProductsTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('wh_id');
             $table->string('name');
-            $table->double('price');
-            $table->double('retail_price');
+            $table->double('unit_price');
             $table->integer('quantity');
             $table->timestamps();
         });

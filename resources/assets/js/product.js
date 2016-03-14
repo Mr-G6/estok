@@ -10,19 +10,11 @@ var Product = function () {
     };
 
     /**
-     * Returns Product Price
+     * Returns Product Unit Price
      * @returns {*}
      */
-    this.getProductPrice = function () {
-        return $.trim($("#p_price").val());
-    };
-
-    /**
-     * Returns Product Retail Price
-     * @returns {*}
-     */
-    this.getRetailPrice = function () {
-        return $.trim($("#p_r_price").val());
+    this.getUnitPrice = function () {
+        return $.trim($("#unit_price").val());
     };
 
     /**
@@ -75,16 +67,6 @@ var Product = function () {
      */
     this.isAPositiveNumber = function(value){
         return (value > 0);
-    };
-
-    /**
-     * Check if Value A is greater than Value B
-     * @param val_a
-     * @param val_b
-     * @returns {boolean}
-     */
-    this.isAGreaterValue = function(val_a, val_b){
-        return (val_a > val_b);
     };
 
     /**
@@ -161,8 +143,7 @@ var Product = function () {
                             context.getWareHouseId(),
                             context.getProductID(),
                             context.getName(),
-                            context.getProductPrice(),
-                            context.getRetailPrice(),
+                            context.getUnitPrice(),
                             context.getQuantity(),
                             context.getToken()
                         );
@@ -172,8 +153,7 @@ var Product = function () {
                         context.saveProduct(
                             context.getWareHouseId(),
                             context.getName(),
-                            context.getProductPrice(),
-                            context.getRetailPrice(),
+                            context.getUnitPrice(),
                             context.getQuantity(),
                             context.getToken()
                         );
@@ -193,7 +173,7 @@ var Product = function () {
      * @param quantity
      * @param token
      */
-    this.saveProduct = function (wh_id, name, price, r_price, quantity, token) {
+    this.saveProduct = function (wh_id, name, unit_price, quantity, token) {
         $.ajax({
             url: '/warehouse/product/add',
             type: 'POST',
@@ -201,8 +181,7 @@ var Product = function () {
                 _token: token,
                 id: wh_id,
                 p_name: name,
-                p_price: price,
-                p_r_price: r_price,
+                unit_price: unit_price,
                 p_quantity: quantity
             },
             success: function (res) {
@@ -223,7 +202,7 @@ var Product = function () {
      * @param quantity
      * @param token
      */
-    this.updateProduct = function (wh_id, p_id, name, price, r_price, quantity, token) {
+    this.updateProduct = function (wh_id, p_id, name, unit_price, quantity, token) {
         $.ajax({
             url: '/warehouse/product/update',
             type: 'POST',
@@ -232,8 +211,7 @@ var Product = function () {
                 id: wh_id,
                 p_id: p_id,
                 p_name: name,
-                p_price: price,
-                p_r_price: r_price,
+                unit_price: unit_price,
                 p_quantity: quantity
             },
             success: function (res) {
@@ -274,30 +252,25 @@ var Product = function () {
         var _this = e.data.context,
             action = (e.data.action === 'add') ? 'add' : 'edit',
             name = _this.getName(),
-            p_price = _this.getProductPrice(),
-            p_r_price = _this.getRetailPrice(),
+            unit_price = _this.getUnitPrice(),
             p_quantity = _this.getQuantity(),
             wh_id = _this.getWareHouseId();
 
-        if (_this.isNumeric(p_price) &&
-            _this.isNumeric(p_r_price) &&
+        if (_this.isNumeric(unit_price) &&
             _this.isInt(p_quantity) &&
-            _this.isAPositiveNumber(p_price) &&
-            _this.isAPositiveNumber(p_r_price) &&
-            _this.isAPositiveNumber(p_quantity) &&
-            _this.isAGreaterValue(p_r_price,p_price)) {
+            _this.isAPositiveNumber(unit_price) &&
+            _this.isAPositiveNumber(p_quantity)
+        ) {
             if (!_this.detectEditChange()) {
                 _this.verifyProductExist(wh_id, name, action, _this);
                 _this.hideErrorDoM();
             } else {
-
                 if (action === 'edit') {
                     _this.updateProduct(
                         _this.getWareHouseId(),
                         _this.getProductID(),
                         _this.getName(),
-                        _this.getProductPrice(),
-                        _this.getRetailPrice(),
+                        _this.getUnitPrice(),
                         _this.getQuantity(),
                         _this.getToken()
                     );
@@ -307,8 +280,7 @@ var Product = function () {
                     context.saveProduct(
                         context.getWareHouseId(),
                         context.getName(),
-                        context.getProductPrice(),
-                        context.getRetailPrice(),
+                        context.getUnitPrice(),
                         context.getQuantity(),
                         context.getToken()
                     );
@@ -316,36 +288,20 @@ var Product = function () {
             }
         } else {
             _this.clearErrors();
-            if (!_this.isNumeric(p_price)) {
+            if (!_this.isNumeric(unit_price)) {
                 _this.errors.push("Price must be a numerical value.");
-            }
-
-            if (!_this.isNumeric(p_r_price)) {
-                _this.errors.push("Retail Price must be a numerical value.");
-            }
-
-            if (!_this.isNumeric(p_quantity)) {
-                _this.errors.push("Quantity must be a numerical value.");
             }
 
             if (!_this.isInt(p_quantity)) {
                 _this.errors.push("Quantity must be a Integer value.");
             }
 
-            if(!_this.isAPositiveNumber(p_price)){
+            if(!_this.isAPositiveNumber(unit_price)){
                 _this.errors.push("Invalid Price value.");
-            }
-
-            if(!_this.isAPositiveNumber(p_r_price)){
-                _this.errors.push("Invalid Retail Price value.");
             }
 
             if(!_this.isAPositiveNumber(p_quantity)){
                 _this.errors.push("Invalid Quantity value.");
-            }
-
-            if(!_this.isAGreaterValue(p_r_price,p_price)){
-                _this.errors.push("Retail Price must be greater than Wholesale Price.")
             }
 
             _this.appendErrorsOnDom();

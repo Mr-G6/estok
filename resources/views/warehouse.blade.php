@@ -28,13 +28,13 @@
                         Name
                     </th>
                     <th>
-                        Wholesale
-                    </th>
-                    <th>
-                        Retail
-                    </th>
-                    <th>
                         Quantity
+                    </th>
+                    <th>
+                        Unit Price
+                    </th>
+                    <th>
+                        Total Cost
                     </th>
                     <th>
                         Added at
@@ -55,13 +55,13 @@
                             {{$product->name}}
                         </td>
                         <td>
-                            Rs.{{$product->price}}
-                        </td>
-                        <td>
-                            Rs.{{$product->retail_price}}
-                        </td>
-                        <td>
                             {{$product->quantity}}
+                        </td>
+                        <td>
+                            Rs.{{$product->unit_price}}
+                        </td>
+                        <td>
+                            Rs.{{$product->unit_price * $product->quantity}}
                         </td>
                         <td>
                             {{date_format($product->created_at, 'Y-m-d')}}
@@ -84,6 +84,32 @@
                         </td>
                     </tr>
                 @endforeach
+                    <tr class="bg-info">
+                        <td>
+                            <b>
+                                Total
+                            </b>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                            <b>
+                                {{App\Models\Products::all()->sum('quantity')}} Items
+                            </b>
+                        </td>
+                        <td>
+                            <b>
+                                Rs.{{App\Models\Products::all()->sum('unit_price')}}
+                            </b>
+                        </td>
+                        <td>
+                            <b>
+                                Rs.{{App\Models\Products::all()->sum('unit_price') * App\Models\Products::all()->sum('quantity')}}
+                            </b>
+                        </td>
+                        <td></td>
+                        <td></td>
+                    </tr>
                 </tbody>
             </table>
         @else

@@ -91,15 +91,13 @@ class WareHouseController extends Controller{
 
         $wh_id = $request->input('id');
         $name = $request->input('p_name');
-        $price = $request->input('p_price');
-        $r_price = $request->input('p_r_price');
+        $unit_price = $request->input('unit_price');
         $quantity = $request->input('p_quantity');
 
         $product = new Products;
         $product->name = $name;
         $product->wh_id = $wh_id;
-        $product->price = $price;
-        $product->retail_price = $r_price;
+        $product->unit_price = $unit_price;
         $product->quantity = $quantity;
 
         if($product->save()){
@@ -134,16 +132,14 @@ class WareHouseController extends Controller{
         $p_id = $request->input('p_id');
         $wh_id = $request->input('id');
         $name = $request->input('p_name');
-        $price = $request->input('p_price');
-        $r_price = $request->input('p_r_price');
+        $unit_price = $request->input('unit_price');
         $quantity = $request->input('p_quantity');
 
         $update = Products::where('wh_id', '=', $wh_id)
                             ->where('id','=', $p_id)
                             ->update([
                                 'name'  =>  $name,
-                                'price' =>  $price,
-                                'retail_price'  =>  $r_price,
+                                'unit_price' =>  $unit_price,
                                 'quantity'  =>  $quantity
                             ]);
         if($update){

@@ -18,22 +18,12 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="p_price">Wholesale Price </label>
+                    <label for="unit_price">Unit Price </label>
                     <input type="text"
                            class="form-control"
-                           name="p_price"
-                           id="p_price"
+                           name="unit_price"
+                           id="unit_price"
                            placeholder="Product Wholesale Price"
-                           required>
-                </div>
-
-                <div class="form-group">
-                    <label for="p_price">Retail Price </label>
-                    <input type="text"
-                           class="form-control"
-                           name="p_r_price"
-                           id="p_r_price"
-                           placeholder="Product Retail Price"
                            required>
                 </div>
 
