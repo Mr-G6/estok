@@ -1,6 +1,7 @@
 .edit-product {
     .wrapper {
-        width: 500px;
+        min-width: 300px;
+        max-width: 500px;
         margin: 50px auto;
 
         .btn {

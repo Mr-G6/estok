@@ -18,73 +18,74 @@
         </div>
 
         @if(count($products))
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>
-                        # ID
-                    </th>
-                    <th>
-                        Name
-                    </th>
-                    <th>
-                        Quantity
-                    </th>
-                    <th>
-                        Unit Price
-                    </th>
-                    <th>
-                        Total Cost
-                    </th>
-                    <th>
-                        Added at
-                    </th>
-                    <td>
-
-                    </td>
-                </tr>
-                </thead>
-
-                <tbody>
-                @foreach($products as $product)
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
                     <tr>
+                        <th>
+                            # ID
+                        </th>
+                        <th>
+                            Name
+                        </th>
+                        <th>
+                            Quantity
+                        </th>
+                        <th>
+                            Unit Price
+                        </th>
+                        <th>
+                            Total Cost
+                        </th>
+                        <th>
+                            Added at
+                        </th>
                         <td>
-                            {{$product->id}}
-                        </td>
-                        <td>
-                            {{$product->name}}
-                        </td>
-                        <td>
-                            {{$product->quantity}}
-                        </td>
-                        <td>
-                            Rs.{{$product->unit_price}}
-                        </td>
-                        <td>
-                            Rs.{{$product->unit_price * $product->quantity}}
-                        </td>
-                        <td>
-                            {{date_format($product->created_at, 'Y-m-d')}}
-                        </td>
 
-                        <td>
-                            <div class="btn-group pull-right" role="group" aria-label="...">
-                                <a href="/warehouse/{{$warehouse->id}}/products/edit/{{$product->id}}">
-                                    <button type="button" class="btn btn-default">
-                                        <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit
-                                    </button>
-                                </a>
-
-                                <a href="/warehouse/{{$warehouse->id}}/products/delete/{{$product->id}}">
-                                    <button type="button" class="btn btn-default">
-                                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete
-                                    </button>
-                                </a>
-                            </div>
                         </td>
                     </tr>
-                @endforeach
-                    <tr class="bg-info">
+                    </thead>
+
+                    <tbody>
+                    @foreach($products as $product)
+                        <tr>
+                            <td>
+                                {{$product->id}}
+                            </td>
+                            <td>
+                                {{$product->name}}
+                            </td>
+                            <td>
+                                {{$product->quantity}}
+                            </td>
+                            <td>
+                                Rs.{{$product->unit_price}}
+                            </td>
+                            <td>
+                                Rs.{{$product->unit_price * $product->quantity}}
+                            </td>
+                            <td>
+                                {{date_format($product->created_at, 'Y-m-d')}}
+                            </td>
+
+                            <td>
+                                <div class="btn-group pull-right" role="group" aria-label="...">
+                                    <a href="/warehouse/{{$warehouse->id}}/products/edit/{{$product->id}}">
+                                        <button type="button" class="btn btn-default">
+                                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit
+                                        </button>
+                                    </a>
+
+                                    <a href="/warehouse/{{$warehouse->id}}/products/delete/{{$product->id}}">
+                                        <button type="button" class="btn btn-default">
+                                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete
+                                        </button>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                    <tr>
                         <td>
                             <b>
                                 Total
@@ -110,8 +111,9 @@
                         <td></td>
                         <td></td>
                     </tr>
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         @else
             <div class="alert alert-warning" role="alert">No Products Available in {{$warehouse->name}}.</div>
         @endif

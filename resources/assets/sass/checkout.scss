@@ -1,0 +1,20 @@
+.checkout{
+    .form-inline{
+        label{
+            width: 100px;
+        }
+
+        .form-group:last-child{
+            padding-top: 25px;
+        }
+
+        @media (min-width: 1200px){
+            .form-group{
+                width : 20%;
+
+                .btn {
+                }
+            }
+        }
+    }
+}
