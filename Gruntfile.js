@@ -31,13 +31,25 @@ module.exports = function(grunt) {
             }
         },
 
+        babel: {
+            options: {
+                sourceMap: true,
+                presets: ['es2015']
+            },
+            dist: {
+                files: {
+                    'public/assets/js/app.js': 'public/assets/js/app.js'
+                }
+            }
+        },
+
 
         watch: {
             scripts: {
                 files: [
                     'resources/assets/js/*.js'
                 ],
-                tasks: ['concat', 'uglify']
+                tasks: ['concat', 'babel' ,'uglify']
             },
 
             css: {
@@ -61,5 +73,7 @@ module.exports = function(grunt) {
 
     grunt.loadNpmTasks('grunt-contrib-watch');
 
-    grunt.registerTask('default', ['concat', 'sass', 'uglify', 'watch']);
+    grunt.loadNpmTasks('grunt-babel');
+
+    grunt.registerTask('default', ['concat', 'sass', 'babel', 'uglify', 'watch']);
 };

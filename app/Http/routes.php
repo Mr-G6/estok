@@ -13,4 +13,10 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/warehouse/{id}/products/add', 'WareHouseController@newProduct');
     Route::get('/warehouse/{wh_id}/products/delete/{id}', 'WareHouseController@deleteProduct');
     Route::get('/warehouse/{id}/products/edit/{p_id}', 'WareHouseController@editProduct');
+
+    Route::post('/warehouse/checkout/transaction', 'CheckoutController@checkout');
+    Route::get('/warehouse/checkout/{id}', 'CheckoutController@index');
+    Route::get('/warehouse/checkout/{id}/products', 'CheckoutController@getProducts');
+    Route::get('/warehouse/checkout/product/details', 'CheckoutController@getProductDetails');
+    Route::get('/warehouse/checkout/product/quantity', 'CheckoutController@validateQuantity');
 });

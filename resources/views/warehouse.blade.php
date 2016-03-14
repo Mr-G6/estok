@@ -95,17 +95,21 @@
                         </td>
                         <td>
                             <b>
-                                {{App\Models\Products::all()->sum('quantity')}} Items
+                                {{App\Models\Products::where('wh_id','=',$warehouse->id)->sum('quantity')}} Items
                             </b>
                         </td>
                         <td>
                             <b>
-                                Rs.{{App\Models\Products::all()->sum('unit_price')}}
+                                Rs.{{App\Models\Products::where('wh_id','=',$warehouse->id)->sum('unit_price')}}
                             </b>
                         </td>
                         <td>
                             <b>
-                                Rs.{{App\Models\Products::all()->sum('unit_price') * App\Models\Products::all()->sum('quantity')}}
+                                Rs.
+                                {{
+                                    App\Models\Products::where('wh_id','=',$warehouse->id)->sum('unit_price') *
+                                    App\Models\Products::where('wh_id','=',$warehouse->id)->sum('quantity')
+                                }}
                             </b>
                         </td>
                         <td></td>
