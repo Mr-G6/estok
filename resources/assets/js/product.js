@@ -137,6 +137,7 @@ var Product = function () {
                     context.errors.push("Item Already Exist.");
                     context.appendErrorsOnDom();
                     context.showErrorDoM();
+                    context.addEventHanlder();
                 } else {
                     if (action === 'edit') {
                         context.updateProduct(
@@ -247,7 +248,6 @@ var Product = function () {
      * @returns {boolean}
      */
     this.validateForm = function (e) {
-
         e.preventDefault();
         var _this = e.data.context,
             action = (e.data.action === 'add') ? 'add' : 'edit',
@@ -255,6 +255,8 @@ var Product = function () {
             unit_price = _this.getUnitPrice(),
             p_quantity = _this.getQuantity(),
             wh_id = _this.getWareHouseId();
+
+        _this.removeEventHandlers();
 
         if (_this.isNumeric(unit_price) &&
             _this.isInt(p_quantity) &&
@@ -287,6 +289,7 @@ var Product = function () {
                 }
             }
         } else {
+            _this.addEventHanlder();
             _this.clearErrors();
             if (!_this.isNumeric(unit_price)) {
                 _this.errors.push("Price must be a numerical value.");
@@ -308,6 +311,14 @@ var Product = function () {
             _this.showErrorDoM();
         }
         return false;
+    };
+
+    this.removeEventHandlers = function(){
+        $("#add-product-form").unbind("submit");
+    };
+
+    this.addEventHanlder = function(){
+        $("#add-product-form").on("submit", {context: this, action: 'add'}, this.validateForm);
     };
 
     /**

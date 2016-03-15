@@ -7,7 +7,7 @@
 @section('edit_warehouse')
     <div class="add-product">
         <div class="wrapper">
-            <form id="add-product-form" method="POST" action="/warehouse/product/add">
+            <form id="add-product-form" method="POST">
                 <div class="form-group">
                     <label for="p_name">Name </label>
                     <input type="text"
