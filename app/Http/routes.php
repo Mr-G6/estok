@@ -19,4 +19,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/warehouse/checkout/{id}/products', 'CheckoutController@getProducts');
     Route::get('/warehouse/checkout/product/details', 'CheckoutController@getProductDetails');
     Route::get('/warehouse/checkout/product/quantity', 'CheckoutController@validateQuantity');
+
+    Route::get('/warehouse/{id}/transactions', 'TransactionController@index');
+    Route::get('/warehouse/{id}/transactions/byDate', 'TransactionController@getTransactionsByDate');
 });

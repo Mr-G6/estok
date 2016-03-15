@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Models\Products;
+use App\Models\Transaction;
 use App\Models\WareHouse;
 use Illuminate\Http\Request;
 
@@ -46,6 +47,15 @@ class CheckoutController extends Controller{
         $items = json_decode($request->input('items'));
         foreach($items as $item){
             Products::where('wh_id','=',$wh_id)->where('name','=',$item->name)->decrement('quantity',$item->quantity);
+            $transaction = new Transaction;
+            $transaction->wh_id = $wh_id;
+            $transaction->item_name = $item->name;
+            $transaction->item_quantity = $item->quantity;
+            $transaction->retail_price = $item->r_price;
+            $transaction->unit_price = $item->unit_price;
+            $transaction->retail_total = $item->quantity * $item->r_price;
+            $transaction->cost_total = $item->quantity * $item->unit_price;
+            $transaction->save();
         }
         return response()->json(true);
     }

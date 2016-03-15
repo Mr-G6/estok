@@ -7,6 +7,24 @@
 @section('dashboard')
     <div class="checkout" data-wh-id="{{$warehouse->id}}" data-token="{{csrf_token()}}">
         <div class="page-header">
+            <a class="pull-right" href="/warehouse/{{$warehouse->id}}/transactions">
+                <button type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-stats" aria-hidden="true"></span> Reports
+                </button>
+            </a>
+
+            <a class="pull-right" href="/warehouse/{{$warehouse->id}}/products">
+                <button type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-list" aria-hidden="true"></span> Products
+                </button>
+            </a>
+
+            <a class="pull-right" href="/warehouse/{{$warehouse->id}}/products/add">
+                <button type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Products
+                </button>
+            </a>
+
             <h3> Checkout
                 <small>{{$warehouse->name}}</small>
             </h3>

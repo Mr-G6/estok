@@ -17,10 +17,6 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
 
-                        <a class="pull-right" href="/warehouse/checkout/{{$warehouse->id}}">
-                            <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
-                        </a>
-
                         <a class="pull-right" href="/warehouse/edit/{{$warehouse->id}}">
                             <span class="glyphicon glyphicon glyphicon-cog" aria-hidden="true"></span>
                         </a>
@@ -95,12 +91,24 @@
 
                         <a href="/warehouse/{{$warehouse->id}}/products">
                             <button type="button" class="btn btn-default">
-                                <span class="glyphicon glyphicon-list" aria-hidden="true"></span> View Products
+                                <span class="glyphicon glyphicon-list" aria-hidden="true"></span> Products
                             </button>
                         </a>
                         <a href="/warehouse/{{$warehouse->id}}/products/add">
                             <button type="button" class="btn btn-default">
                                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Products
+                            </button>
+                        </a>
+
+                        <a href="/warehouse/{{$warehouse->id}}/transactions">
+                            <button type="button" class="btn btn-default">
+                                <span class="glyphicon glyphicon-stats" aria-hidden="true"></span> Reports
+                            </button>
+                        </a>
+
+                        <a href="/warehouse/checkout/{{$warehouse->id}}">
+                            <button type="button" class="btn btn-default">
+                                <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Checkout
                             </button>
                         </a>
                     </div>

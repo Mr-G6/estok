@@ -17,11 +17,15 @@
     @yield('warehouse')
     @yield('edit_warehouse')
     @yield('edit_product')
+    @yield('transactions')
 </div>
 
 <script type="text/javascript" src="/assets/lib/jquery/dist/jquery.min.js"></script>
 <script src="/assets/lib/jquery-ui/jquery-ui.min.js"></script>
 <script type="text/javascript" src="/assets/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/assets/lib/moment/moment.js"></script>
+
+
 <script type="text/javascript" src="/assets/js/app.js"></script>
 </body>
 </html>

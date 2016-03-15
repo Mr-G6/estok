@@ -376,7 +376,7 @@ Checkout = function () {
         _this.products.splice(_this.findIndex(item_name), 1);
         $(this).parents('.item').remove();
         _this.clearErrors();
-        $("#c_p_name").focus();
+        $("#c_p_quantity").focus();
         _this.handleCheckoutSubmit();
         _this.setCheckoutTotals();
     };

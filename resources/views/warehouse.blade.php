@@ -7,11 +7,25 @@
 @section('warehouse')
     <div class="products">
         <div class="page-header">
+
+            <a class="pull-right" href="/warehouse/{{$warehouse->id}}/transactions">
+                <button type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-stats" aria-hidden="true"></span> Reports
+                </button>
+            </a>
+
+            <a class="pull-right" href="/warehouse/checkout/{{$warehouse->id}}">
+                <button type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Checkout
+                </button>
+            </a>
+
             <a class="pull-right" href="/warehouse/{{$warehouse->id}}/products/add">
                 <button type="button" class="btn btn-default">
                     <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Products
                 </button>
             </a>
+
             <h3>{{$warehouse->name}}
                 <small>{{$warehouse->location}}</small>
             </h3>

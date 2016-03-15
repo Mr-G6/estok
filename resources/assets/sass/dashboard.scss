@@ -2,7 +2,7 @@
 
     .panel{
         margin-right: 5px;
-        height: 300px;
+        height: 340px;
     }
     .row{
         margin: 0px auto;
@@ -27,19 +27,15 @@
         padding: 5px;
     }
 
-    .glyphicon-cog:hover,
-    .glyphicon-shopping-cart:hover{
+    .glyphicon-cog:hover{
         color:black;
     }
 
-    .glyphicon-shopping-cart{
-        cursor:pointer;
-        font-size: 20px;
-        padding: 5px;
+    .row:hover .glyphicon-cog{
+        display:block;
     }
 
-    .row:hover .glyphicon-cog,
-    .row:hover .glyphicon-shopping-cart{
-        display:block;
+    button {
+        margin-top: 5px;
     }
 }
