@@ -32,6 +32,18 @@
         </div>
 
         @if(count($products))
+            <div class="product-search">
+                <form class="form-inline">
+                    <div class="form-group pull-right">
+                        <input type="text"
+                               class="form-control"
+                               id="product-search"
+                               placeholder="Search Product"
+                               required>
+                    </div>
+                </form>
+            </div>
+
             <div class="table-responsive">
                 <table class="table">
                     <thead>
@@ -66,7 +78,7 @@
                             <td>
                                 {{$product->id}}
                             </td>
-                            <td>
+                            <td class="product-search-name" data-name="{{$product->name}}">
                                 {{$product->name}}
                             </td>
                             <td>

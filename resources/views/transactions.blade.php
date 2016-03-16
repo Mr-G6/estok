@@ -58,7 +58,7 @@
 
             <div class="alert alert-danger" id="transaction_error" role="alert"></div>
 
-        
+
             <div class="transaction-table table-responsive">
                 <table class="table">
                     <thead>

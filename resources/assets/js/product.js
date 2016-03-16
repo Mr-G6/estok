@@ -321,12 +321,34 @@ var Product = function () {
         $("#add-product-form").on("submit", {context: this, action: 'add'}, this.validateForm);
     };
 
+    this.productSearch = function(e){
+        e.preventDefault();
+        var _this = e.data.context,
+            query = $.trim($(this).val()).toLowerCase();
+
+        var $products = $(".product-search-name");
+        if(query.length){
+            console.log($products.length);
+            for(var i = 0; i < $products.length; i++){
+                var value = $.trim($($products[i]).attr('data-name')).toLowerCase();
+                if(value.search(query) != -1){
+                    $($products[i]).parent('tr').slideDown();
+                }else{
+                    $($products[i]).parent('tr').slideUp();
+                }
+            }
+        }else{
+            $($products).parents('tr').slideDown();
+        }
+    };
+
     /**
      * Edit Product Event Handlers
      */
     this.init = function () {
         $("#edit-product-form").on("submit", {context: this, action: 'edit'}, this.validateForm);
         $("#add-product-form").on("submit", {context: this, action: 'add'}, this.validateForm);
+        $("#product-search").on('keyup', {context : this}, this.productSearch);
     };
 };
 
