@@ -88,7 +88,7 @@
                                 Rs.{{$product->unit_price}}
                             </td>
                             <td>
-                                Rs.{{$product->unit_price * $product->quantity}}
+                                Rs.{{$product->total_cost}}
                             </td>
                             <td>
                                 {{date_format($product->created_at, 'Y-m-d')}}
@@ -132,10 +132,7 @@
                         <td>
                             <b>
                                 Rs.
-                                {{
-                                    App\Models\Products::where('wh_id','=',$warehouse->id)->sum('unit_price') *
-                                    App\Models\Products::where('wh_id','=',$warehouse->id)->sum('quantity')
-                                }}
+                                {{$total_cost}}
                             </b>
                         </td>
                         <td></td>

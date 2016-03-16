@@ -17,8 +17,15 @@ class WareHouseController extends Controller{
 
         $warehouse = WareHouse::where('id','=',$id)->get()->first();
         $products = Products::where('wh_id','=',$id)->get();
+
+        $total_cost = 0;
+        for($i = 0; $i<count($products); $i++){
+            $products[$i]->total_cost = $products[$i]->unit_price * $products[$i]->quantity;
+            $total_cost += $products[$i]->total_cost;
+        }
         return view('warehouse')->with('products',$products)
-                                ->with('warehouse',$warehouse);
+                                ->with('warehouse',$warehouse)
+                                ->with('total_cost',$total_cost);
     }
 
     /**
