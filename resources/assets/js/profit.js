@@ -115,7 +115,7 @@ var Transactions = function () {
         var _this = this;
         $.ajax({
             type: 'GET',
-            url: '/warehouse/' + wh_id + '/transactions/byDate',
+            url: '/warehouse/' + wh_id + '/profit/byDate',
             data: {
                 from: from,
                 to: to
@@ -178,6 +178,16 @@ var Transactions = function () {
         $("#transaction-lists").parent('.table-responsive').append($total);
     };
 
+    this.setQuery = function(name){
+        var $DOM = `<div class="panel panel-default">
+                        <div class="panel-body">
+                            Product Search : <b>${name}</b>
+                        </div>
+                    </div>`;
+
+        $("#transaction-lists").parent('.table-responsive').prepend($DOM);
+    }
+
     /**
      * Set Date Search Ranges
      * @param from
@@ -206,6 +216,71 @@ var Transactions = function () {
     };
 
     /**
+     * Search Product and calculate totals
+     * @param e
+     */
+    this.productSearch = function(e){
+        e.preventDefault();
+        var _this = e.data.context,
+            query = $.trim($(this).val()).toLowerCase();
+
+        if(e.which == 13){
+            if(query.length){
+                _this.getTransactionsByName(query);
+            }else{
+                _this.errors.push('Product name required!');
+                _this.appendErrorsOnDom();
+                _this.showErrorDoM();
+                _this.showTransactionTable();
+                _this.clearTransactions();
+            }
+        }
+
+        if(e.which == 27){
+            $(this).val('');
+            $(this).blur();
+            _this.showTransactionTable();
+            _this.clearTransactions();
+            _this.hideErrorDoM();
+        }
+    };
+
+    /**
+     * Search Products by name
+     * @param name
+     */
+    this.getTransactionsByName = function (name) {
+        this.clearTransactions();
+        var _this = this,
+            wh_id = this.getWareHouseID();
+        $.ajax({
+            type: 'GET',
+            url: '/warehouse/' + wh_id + '/profit/byName',
+            data: {
+                name : name
+            },
+            success: function (res) {
+                console.log(res);
+
+                if (res.length) {
+                    _this.hideTransactionTable();
+                    _this.appendTableHeader();
+                    _this.appendTableBody();
+                    _this.appendItemsToDOM(res);
+                    _this.setTotals(res);
+                    _this.setQuery(name);
+                    _this.hideErrorDoM();
+                } else {
+                    _this.errors.push('No Transactions matched with product name.');
+                    _this.appendErrorsOnDom();
+                    _this.showErrorDoM();
+                    _this.showTransactionTable();
+                }
+            }
+        })
+    };
+
+    /**
      * Initialize Transaction Handlers
      */
     this.init = function () {
@@ -223,6 +298,8 @@ var Transactions = function () {
                 _this.setDate('to', dateText);
             }
         });
+
+        $("#p-product-name").on('keyup', {context : this}, this.productSearch);
     };
 };
 

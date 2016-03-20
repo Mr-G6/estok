@@ -4,13 +4,14 @@
     <title>{{$warehouse->name}} - UrbanWare</title>
 @stop
 
-@section('transactions')
+@section('body')
     <div class="transactions" data-wh-id="{{$warehouse->id}}">
         <div class="page-header">
 
-            <a class="pull-right" href="/warehouse/{{$warehouse->id}}/transactions">
+
+            <a class="pull-right" href="/warehouse/{{$warehouse->id}}/sales">
                 <button type="button" class="btn btn-default">
-                    <span class="glyphicon glyphicon-stats" aria-hidden="true"></span> Reports
+                    <i class="fa fa-credit-card"></i></span> Sales
                 </button>
             </a>
 
@@ -22,12 +23,19 @@
 
             <a class="pull-right" href="/warehouse/{{$warehouse->id}}/products">
                 <button type="button" class="btn btn-default">
-                    <span class="glyphicon glyphicon-list" aria-hidden="true"></span> Products
+                    <span class="glyphicon glyphicon-list" aria-hidden="true"></span> Inventory
                 </button>
             </a>
 
+            <a class="pull-right" href="/warehouse/{{$warehouse->id}}/products/add">
+                <button type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Products
+                </button>
+            </a>
+
+
             <h3>
-                Transactions
+                Profit
                 <small>{{$warehouse->name}}</small>
             </h3>
         </div>
@@ -51,6 +59,15 @@
                                class="form-control"
                                id="datepicker-to"
                                placeholder="Date To"
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="datepicker"> Search :  </label>
+                        <input type="text"
+                               class="form-control"
+                               id="p-product-name"
+                               placeholder="Search Product"
                                required>
                     </div>
                 </form>

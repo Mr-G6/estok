@@ -6,12 +6,18 @@
     }
     .row{
         margin: 0px auto;
-        .panel-body{
-            height: 100%;
-            .btn:nth-child(0),
-            .btn:nth-child(1){
-                width: 49%;
+        .panel{
+            height:auto;
+            overflow-x:auto;
+            .panel-body{
+                .btn{
+                    width: 100%;
+                }
             }
+        }
+
+        table{
+            margin-top: 5px;
         }
     }
 

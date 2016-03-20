@@ -19,8 +19,8 @@
 
     .date{
         display:block;
-        height:50px;
-
+        height: auto;
+        overflow:auto;
         form{
             label{
                 padding: 15px;

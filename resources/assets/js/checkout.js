@@ -65,6 +65,7 @@ Checkout = function () {
         $("#c_p_quantity").val('');
         $("#c_p_r_price").val('');
         $("#c_p_unit_price").val('');
+        $("#receipt_name, #receipt_address, #receipt_no").val('');
         this.product = {};
     };
 
@@ -150,7 +151,6 @@ Checkout = function () {
     /**
      * Find Index by Product Name
      */
-
     this.findIndex = function(name){
         for(var i = 0; i< this.products.length; i++){
             if(this.products[i].name === name){
@@ -161,12 +161,16 @@ Checkout = function () {
     };
 
     /**
-     *
+     *  Get CSRF Token
      */
     this.getToken = function(){
         return $(".checkout").attr('data-token');
     };
 
+    /**
+     * Calculate Products Total Retail Price
+     * @returns {number}
+     */
     this.getProductsTotalRetail = function(){
         var sum = 0;
         for(var i =0; i<this.products.length; i++){
@@ -175,6 +179,10 @@ Checkout = function () {
         return sum;
     };
 
+    /**
+     * Calculate Product Total Cost
+     * @returns {number}
+     */
     this.getTotalCost = function(){
         var sum = 0;
         for(var i =0; i<this.products.length; i++){
@@ -183,6 +191,10 @@ Checkout = function () {
         return sum;
     };
 
+    /**
+     * Return Total Items in Checkout
+     * @returns {Number}
+     */
     this.getTotalItems = function(){
         return this.products.length;
     };
@@ -324,6 +336,9 @@ Checkout = function () {
         });
     };
 
+    /**
+     * Show Checkout Options on If products exist in checkout list
+     */
     this.handleCheckoutSubmit = function(){
         var items_count = $("#checkout-list").find('.item').length;
         console.log(items_count);
@@ -498,18 +513,44 @@ Checkout = function () {
     };
 
     /**
+     * Get Checkout Buyer Name
+     * @returns {*}
+     */
+    this.getCheckoutName = function(){
+        return $.trim($('#receipt_name').val());
+    };
+
+    /**
+     *
+     * @returns {*}
+     */
+    this.getCheckoutAddress = function() {
+        return $.trim($('#receipt_address').val());
+    };
+
+    this.getCheckoutPhoneNo = function(){
+        return $.trim($('#receipt_no').val());
+    };
+
+    /**
      * Process Checkout
      * @param e
      */
     this.checkout = function(e){
-        var _this = e.data.context;
+        var _this = e.data.context,
+            name = _this.getCheckoutName(),
+            address = _this.getCheckoutAddress(),
+            phone_no = _this.getCheckoutPhoneNo();
         $.ajax({
             type : "POST",
             url : '/warehouse/checkout/transaction',
             data : {
                 wh_id : _this.getWareHouseId(),
                 _token : _this.getToken(),
-                items : JSON.stringify(_this.products)
+                items : JSON.stringify(_this.products),
+                buyer : name,
+                address : address,
+                phone : phone_no
             },
             success : function(res){
                 if(res){

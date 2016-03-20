@@ -4,18 +4,26 @@
     <title>Checkout - UrbanWare</title>
 @stop
 
-@section('dashboard')
+@section('body')
     <div class="checkout" data-wh-id="{{$warehouse->id}}" data-token="{{csrf_token()}}">
         <div class="page-header">
-            <a class="pull-right" href="/warehouse/{{$warehouse->id}}/transactions">
+
+            <a class="pull-right" href="/warehouse/{{$warehouse->id}}/sales">
                 <button type="button" class="btn btn-default">
-                    <span class="glyphicon glyphicon-stats" aria-hidden="true"></span> Reports
+                    <i class="fa fa-credit-card"></i></span> Sales
+                </button>
+            </a>
+
+
+            <a class="pull-right" href="/warehouse/{{$warehouse->id}}/profit">
+                <button type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-stats" aria-hidden="true"></span> Profit
                 </button>
             </a>
 
             <a class="pull-right" href="/warehouse/{{$warehouse->id}}/products">
                 <button type="button" class="btn btn-default">
-                    <span class="glyphicon glyphicon-list" aria-hidden="true"></span> Products
+                    <span class="glyphicon glyphicon-list" aria-hidden="true"></span> Inventory
                 </button>
             </a>
 
@@ -122,6 +130,33 @@
                         </td>
                     </tr>
                 </table>
+
+                <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                    <label for="c_p_name"> Buyer Name </label>
+                    <input type="text"
+                           class="form-control"
+                           id="receipt_name"
+                           placeholder="Buyer Name"
+                           required>
+                </div>
+
+                <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                    <label for="c_p_name"> Address </label>
+                    <input type="text"
+                           class="form-control"
+                           id="receipt_address"
+                           placeholder="Address"
+                           required>
+                </div>
+
+                <div class="form-group col-xs-12 col-sm-3 col-md-4 col-lg-4">
+                    <label for="c_p_name"> Phone No. </label>
+                    <input type="text"
+                           class="form-control"
+                           id="receipt_no"
+                           placeholder="Phone no."
+                           required>
+                </div>
 
             </div>
         </div>

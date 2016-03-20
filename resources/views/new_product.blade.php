@@ -4,7 +4,7 @@
     <title>Add Product - UrbanWare</title>
 @stop
 
-@section('edit_warehouse')
+@section('body')
     <div class="add-product">
         <div class="wrapper">
             <form id="add-product-form" method="POST">

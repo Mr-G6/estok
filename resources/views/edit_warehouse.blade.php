@@ -4,7 +4,7 @@
     <title>Edit Warehouse - UrbanWare</title>
 @stop
 
-@section('edit_warehouse')
+@section('body')
     <div class="edit-warehouse">
         <div class="wrapper">
             <form method="POST" action="/warehouse/update">

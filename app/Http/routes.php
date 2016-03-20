@@ -20,6 +20,12 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/warehouse/checkout/product/details', 'CheckoutController@getProductDetails');
     Route::get('/warehouse/checkout/product/quantity', 'CheckoutController@validateQuantity');
 
-    Route::get('/warehouse/{id}/transactions', 'TransactionController@index');
-    Route::get('/warehouse/{id}/transactions/byDate', 'TransactionController@getTransactionsByDate');
+    Route::get('/warehouse/{id}/profit', 'ProfitController@index');
+    Route::get('/warehouse/{id}/profit/byName', 'ProfitController@getTransactionsByName');
+    Route::get('/warehouse/{id}/profit/byDate', 'ProfitController@getTransactionsByDate');
+
+    Route::get('/warehouse/{id}/sales', 'SalesController@index');
+    Route::get('/warehouse/sales/byReceiptId', 'SalesController@getSales');
+
+    Route::post('/warehouse/sales/delete', 'SalesController@deleteSales');
 });

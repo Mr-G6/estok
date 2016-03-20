@@ -4,13 +4,19 @@
     <title>{{$warehouse->name}} - UrbanWare</title>
 @stop
 
-@section('warehouse')
+@section('body')
     <div class="products">
         <div class="page-header">
 
-            <a class="pull-right" href="/warehouse/{{$warehouse->id}}/transactions">
+            <a class="pull-right" href="/warehouse/{{$warehouse->id}}/sales">
                 <button type="button" class="btn btn-default">
-                    <span class="glyphicon glyphicon-stats" aria-hidden="true"></span> Reports
+                    <i class="fa fa-credit-card"></i></span> Sales
+                </button>
+            </a>
+
+            <a class="pull-right" href="/warehouse/{{$warehouse->id}}/profit">
+                <button type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-stats" aria-hidden="true"></span> Profit
                 </button>
             </a>
 
@@ -96,6 +102,12 @@
 
                             <td>
                                 <div class="btn-group pull-right" role="group" aria-label="...">
+                                    <a class="product-details" data-product-name="{{$product->name}}" data-wh-id="{{$product->wh_id}}" href="#">
+                                        <button type="button" class="btn btn-default">
+                                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Details
+                                        </button>
+                                    </a>
+
                                     <a href="/warehouse/{{$warehouse->id}}/products/edit/{{$product->id}}">
                                         <button type="button" class="btn btn-default">
                                             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit
@@ -144,6 +156,24 @@
         @else
             <div class="alert alert-warning" role="alert">No Products Available in {{$warehouse->name}}.</div>
         @endif
+    </div>
 
+    <div class="modal fade" id="product-dt-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="product-dt-title">Checkout Products List</h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered">
+
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
 @stop

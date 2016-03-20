@@ -313,14 +313,24 @@ var Product = function () {
         return false;
     };
 
+    /**
+     * Disable Add Product form submit if validation fails
+     */
     this.removeEventHandlers = function(){
         $("#add-product-form").unbind("submit");
     };
 
+    /**
+     * Enable Add Product form submit if validation passes
+     */
     this.addEventHanlder = function(){
         $("#add-product-form").on("submit", {context: this, action: 'add'}, this.validateForm);
     };
 
+    /**
+     * Product Search if search input fields has query
+     * @param e
+     */
     this.productSearch = function(e){
         e.preventDefault();
         var _this = e.data.context,
@@ -343,14 +353,151 @@ var Product = function () {
     };
 
     /**
+     * Show Product transaction details
+     */
+    this.showTransactionsModal = function(){
+        $("#product-dt-modal").modal('show');
+    };
+
+    /**
+     * Hide Product transaction details
+     */
+    this.hideTransactionModal = function(){
+        $("#product-dt-modal").modal('hide');
+    };
+
+    /**
+     * Clear Product items from transaction details modal
+     */
+    this.clearTransactionModalBody = function(){
+        $("#product-dt-modal .modal-body .table").empty();
+    };
+
+    /**
+     * Set Transaction details header with product name
+     * @param name
+     */
+    this.setTransactionProductName = function(name){
+        $("#product-dt-title").text(name + ' Details');
+    };
+
+    /**
+     * Show Product transactions details
+     * @param e
+     */
+    this.showProductDetails = function(e){
+        e.preventDefault();
+        var _this = e.data.context,
+            prod_name = $.trim($(this).attr('data-product-name')),
+            wh_id = $.trim($(this).attr('data-wh-id'));
+        console.log(wh_id);
+
+        $.ajax({
+            type : 'GET',
+            url : '/warehouse/'+wh_id+'/profit/byName',
+            data : {
+                name : prod_name
+            },
+            success : function(transactions){
+                console.log(transactions);
+                if(transactions.length){
+                    _this.appendTableHeader();
+                    _this.appendTableBody();
+                    _this.appendItemsToDOM(transactions);
+                    _this.showTransactionsModal();
+                }
+            }
+        });
+    }
+
+    /**
      * Edit Product Event Handlers
      */
     this.init = function () {
         $("#edit-product-form").on("submit", {context: this, action: 'edit'}, this.validateForm);
         $("#add-product-form").on("submit", {context: this, action: 'add'}, this.validateForm);
         $("#product-search").on('keyup', {context : this}, this.productSearch);
+        $(".product-details").on('click', {context : this}, this.showProductDetails);
+        $('#product-dt-modal').on('hidden.bs.modal', {context :this }, this.clearTransactionModalBody);
     };
 };
 
 var product = new Product();
 product.init();
+
+/**
+ * Append Transaction details table body header
+ */
+Product.prototype.appendTableHeader = function () {
+    var $head = `<thead>
+                    <tr>
+                        <th>
+                            # ID
+                        </th>
+
+                        <th>
+                            Quantity
+                        </th>
+
+                        <th>
+                            Total Cost
+                        </th>
+
+                        <th>
+                            Total Retail
+                        </th>
+                        <th>
+                            Profit
+                        </th>
+                        <th>
+                            Date
+                        </th>
+                        <th>
+                            Time
+                        </th>
+                    </tr>
+                </thead>`;
+    $("#product-dt-modal .modal-body .table").append($head);
+};
+
+/**
+ * Append transaction details table body
+ */
+Product.prototype.appendTableBody = function () {
+    var $body = `<tbody></tbody>`;
+    $("#product-dt-modal .modal-body .table").append($body);
+};
+
+/**
+ * Append transactions list to transaction details table body
+ * @param transactions
+ */
+Product.prototype.appendItemsToDOM = function (transactions) {
+    transactions.forEach(function (transaction) {
+        var $transaction = `<tr>
+                                <td>
+                                    ${transaction.id}
+                                </td>
+
+                                <td>
+                                    ${transaction.item_quantity}
+                                </td>
+                                <td>
+                                    ${transaction.cost_total}
+                                </td>
+                                <td>
+                                    ${transaction.retail_total}
+                                </td>
+                                <td>
+                                    ${transaction.retail_total - transaction.cost_total}
+                                </td>
+                                <td>
+                                    ${moment(transaction.created_at).format('YYYY-MM-DD')}
+                                </td>
+                                <td>
+                                    ${moment(transaction.created_at).format('HH:mm:ss a')}
+                                </td>
+                            </tr>`;
+        $("#product-dt-modal .modal-body .table > tbody").append($transaction);
+    });
+};
