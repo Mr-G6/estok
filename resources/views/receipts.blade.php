@@ -36,8 +36,19 @@
             </h3>
         </div>
 
+        <div class="sales-search">
+            <input type="text"
+                   class="form-control pull-right"
+                   id="sales-search"
+                   data-warehouse="{{$warehouse->id}}"
+                   placeholder="Search by id or name"
+                   required>
+        </div>
+
+        <div class="alert alert-danger" id="receipt_error" role="alert"></div>
+
         @if(count($receipts))
-            <div class="table-responsive">
+            <div class="table-responsive receipts-table">
                 <table class="table">
                     <thead>
                     <tr>
@@ -111,7 +122,7 @@
 
                             <td>
                                 <div class="btn-group pull-right" role="group" aria-label="...">
-                                    <a class="receipt-details" data-receipt-id="{{$receipt->id}}" href="#">
+                                    <a class="receipt-details" data-receipt-id="{{$receipt->id}}" data-name="{{$receipt->name}}" href="#">
                                         <button type="button" class="btn btn-default">
                                             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Details
                                         </button>
@@ -129,17 +140,31 @@
                     </tbody>
                 </table>
             </div>
+
+            <div class="table-responsive">
+                <table id="receipts-lists" class="table table-striped">
+
+                </table>
+            </div>
+
         @else
             <div class="alert alert-warning" role="alert">No Sales Under this Warehouse : {{$warehouse->name}}.</div>
         @endif
     </div>
+    <center>
+        {{$receipts->links()}}
+    </center>
 
     <div class="modal fade" id="receipt-dt-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="receipt-dt-title">Transaction Details</h4>
+                    <div class="header-data">
+                        <h3 class="modal-title" id="receipt-dt-title">Sales Invoice</h3>
+                        <h4 id="receipt-dt-id">Receipt id # 1</h4>
+                        <h4 id="receipt-dt-name">Buyer : Waleed Ahmad</h4>
+                    </div>
                 </div>
                 <div class="modal-body">
                     <table class="table table-bordered">
@@ -147,6 +172,10 @@
                     </table>
                 </div>
                 <div class="modal-footer">
+                    <span id="receipt-dt-total" class="pull-left" style="font-size: 16px;"></span>
+                    <a target="_blank" href="" id="print-receipt">
+                        <button type="button" class="btn btn-default">Print</button>
+                    </a>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
             </div>

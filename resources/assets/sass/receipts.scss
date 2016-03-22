@@ -5,13 +5,8 @@
         }
     }
 
-    .product-search{
-        margin: 15px 0px;
-        height: 30px;
-
-        #product-search{
-            width: 350px;
-        }
+    #receipt_error{
+        display:none;
     }
 
     .table {
@@ -27,6 +22,17 @@
             a {
                 text-decoration: none;
             }
+        }
+    }
+
+    #receipt-dt-total{
+        font-size: 18px;
+    }
+
+    .sales-search{
+        height: 50px;
+        input{
+            width : 300px;
         }
     }
 

@@ -27,5 +27,9 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/warehouse/{id}/sales', 'SalesController@index');
     Route::get('/warehouse/sales/byReceiptId', 'SalesController@getSales');
 
+    Route::get('/warehouse/sales/byReceiptIdOrName', 'SalesController@getSalesByIdOrName');
+
     Route::post('/warehouse/sales/delete', 'SalesController@deleteSales');
+
+    Route::get('/print/receipt/{id}', 'PrinterController@receipt');
 });
