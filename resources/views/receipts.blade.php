@@ -150,10 +150,11 @@
         @else
             <div class="alert alert-warning" role="alert">No Sales Under this Warehouse : {{$warehouse->name}}.</div>
         @endif
+
+        <div class="links">
+            {{$receipts->links()}}
+        </div>
     </div>
-    <center>
-        {{$receipts->links()}}
-    </center>
 
     <div class="modal fade" id="receipt-dt-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
         <div class="modal-dialog modal-lg" role="document">

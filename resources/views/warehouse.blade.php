@@ -39,15 +39,11 @@
 
         @if(count($products))
             <div class="product-search">
-                <form class="form-inline">
-                    <div class="form-group pull-right">
-                        <input type="text"
-                               class="form-control"
-                               id="product-search"
-                               placeholder="Search Product"
-                               required>
-                    </div>
-                </form>
+                <input type="text"
+                       class="form-control pull-right"
+                       id="product-search"
+                       placeholder="Search Product"
+                       required>
             </div>
 
             <div class="table-responsive">

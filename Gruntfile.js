@@ -6,7 +6,11 @@ module.exports = function(grunt) {
         concat: {
             dist: {
                 src: [
-                    'resources/assets/js/*.js',
+                    'resources/assets/js/errors.js',
+                    'resources/assets/js/checkout.js',
+                    'resources/assets/js/product.js',
+                    'resources/assets/js/profit.js',
+                    'resources/assets/js/receipt.js',
                 ],
                 dest: 'public/assets/js/app.js',
             }
@@ -31,7 +35,7 @@ module.exports = function(grunt) {
             }
         },
 
-        babel: {
+        "babel" : {
             options: {
                 sourceMap: true,
                 presets: ['es2015']

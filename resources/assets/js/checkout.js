@@ -1,265 +1,53 @@
-var Checkout;
-Checkout = function () {
-
-    this.productNames = [];
-
-    this.product = {};
-
-    this.products = [];
-
-    this.errors = [];
+class Checkout {
 
     /**
-     * ----------------------
-     * Error Handling Methods
-     * ----------------------
-     */
-
-    /**
-     * Clear Errors and Hide Error DOM
-     */
-    this.clearErrors = function () {
-        this.errors = [];
-        this.hideErrorDoM();
-    };
-
-    /**
-     * Clear and Hide Error DOM
-     */
-    this.hideErrorDoM = function () {
-        $("#c_p_error").slideUp();
-        $("#c_p_error").html('');
-    };
-
-    /**
-     * Show Error DOM
-     */
-    this.showErrorDoM = function () {
-        $("#c_p_error").slideDown();
-    };
-
-    /**
-     * Append Errors on Error DOM
-     */
-    this.appendErrorsOnDom = function () {
-        this.errors.forEach(function (err) {
-            $("<li>" + err + "</li>").appendTo("#c_p_error");
-        });
-    };
-
-    /**
-     * Clear Input Fields
-     * @param fields
-     */
-    this.clearFields = function (fields) {
-        fields.forEach(function (field) {
-            $(field).val('');
-        });
-    };
-
-    /**
-     * Clear Checkout Input Fields
-     */
-    this.clearCheckoutFields = function(){
-        $("#c_p_name").val('').focus();
-        $("#c_p_quantity").val('');
-        $("#c_p_r_price").val('');
-        $("#c_p_unit_price").val('');
-        $("#receipt_name, #receipt_address, #receipt_no").val('');
-        this.product = {};
-    };
-
-    this.clearCheckout = function(){
-        this.clearCheckoutFields();
-        $("#checkout-list").find('.item').remove();
-        this.handleCheckoutSubmit();
-    };
-
-    /**
-     * ---------------------
-     * Getter Setter Methods
-     * ---------------------
-     */
-
-    /**
-     * Get Checkout Product Name
-     * @returns {*}
-     */
-    this.getName = function () {
-        return $.trim($("#c_p_name").val());
-    };
-
-    /**
-     * Get Checkout Product Quantity
-     * @returns {*}
-     */
-    this.getQuantity = function () {
-        return $.trim($("#c_p_quantity").val());
-    };
-
-    /**
-     * Get Checkout Product Retail Price
-     * @returns {*}
-     */
-    this.getRetailPrice = function () {
-        return $.trim($("#c_p_r_price").val());
-    };
-
-    /**
-     * Get Checkout Product Unit Price
-     * @returns {*}
-     */
-    this.getUnitPrice = function () {
-        return $.trim($("#c_p_unit_price").val());
-    };
-
-    /**
-     * Get WareHouse ID
+     * Get CSRF Token
      * @returns {*|jQuery}
      */
-    this.getWareHouseId = function () {
-        return $(".checkout").attr('data-wh-id');
-    };
-
-    /**
-     * Set Checkout Product Unit Price
-     * @param quantity
-     */
-    this.setUnitPrice = function (quantity) {
-        $("#c_p_unit_price").val(quantity);
-    };
-
-    /**
-     * Set AutoComplete on Checkout Product Name Field
-     */
-    this.setAutoComplete = function () {
-        var _this = this,
-            wh_id = this.getWareHouseId();
-        $("#c_p_name").autocomplete({
-            source: this.productNames,
-            select: function (event, ui) {
-                var label = ui.item.label;
-                var value = ui.item.value;
-                _this.clearFields(['#c_p_quantity' , '#c_p_r_price']);
-                _this.setProductDetails(wh_id, value);
-                $("#c_p_quantity").focus();
-                _this.clearErrors();
-            }
-        });
-    };
-
-    /**
-     * Find Index by Product Name
-     */
-    this.findIndex = function(name){
-        for(var i = 0; i< this.products.length; i++){
-            if(this.products[i].name === name){
-                return i;
-            }
-        }
-        return -1;
-    };
-
-    /**
-     *  Get CSRF Token
-     */
-    this.getToken = function(){
+    getToken() {
         return $(".checkout").attr('data-token');
-    };
+    }
 
     /**
-     * Calculate Products Total Retail Price
-     * @returns {number}
-     */
-    this.getProductsTotalRetail = function(){
-        var sum = 0;
-        for(var i =0; i<this.products.length; i++){
-            sum += parseFloat(this.products[i].r_price * this.products[i].quantity);
-        }
-        return sum;
-    };
-
-    /**
-     * Calculate Product Total Cost
-     * @returns {number}
-     */
-    this.getTotalCost = function(){
-        var sum = 0;
-        for(var i =0; i<this.products.length; i++){
-            sum += parseFloat(this.products[i].unit_price * this.products[i].quantity);
-        }
-        return sum;
-    };
-
-    /**
-     * Return Total Items in Checkout
-     * @returns {Number}
-     */
-    this.getTotalItems = function(){
-        return this.products.length;
-    };
-
-    this.setCheckoutTotals = function(){
-        $(".checkout-actions").find('.total-items').text(this.getTotalItems());
-        $(".checkout-actions").find('.cost-total').text(this.getTotalCost());
-        $(".checkout-actions").find('.retail-total').text(this.getProductsTotalRetail());
-    };
-
-    /**
-     * ------------------
-     * Validation Methods
-     * ------------------
-     */
-
-    /**
-     * Check if Product Exist in Product Names
-     * @param product
-     * @returns {boolean}
-     */
-    this.productInProducts = function (product) {
-        return (this.productNames.indexOf(product) > -1);
-    };
-
-    /**
-     * Check if number is an integer
+     * Is an Integer
      * @param value
      * @returns {boolean}
      */
-    this.isInt = function (value) {
+    isInt(value) {
         var er = /^-?[0-9]+$/;
         return er.test(value);
-    };
+    }
 
     /**
-     * Check if number is numeric
+     * Is Numeric
      * @param value
      * @returns {boolean}
      */
-    this.isNumeric = function (value) {
+    isNumeric(value) {
         return !isNaN(value);
-    };
+    }
 
     /**
-     * Check if Number is postitive
+     * Is a positive number
      * @param value
      * @returns {boolean}
      */
-    this.isAPositiveNumber = function (value) {
+    isAPositiveNumber(value) {
         return (value > 0);
-    };
+    }
 
     /**
-     * -------------------
-     * Xhr Request Methods
-     * -------------------
+     * ---------------------
+     * Checkout Form
+     * ---------------------
      */
 
     /**
-     * All Warehouse Products for Checkout
+     * Get Product Names for checkout autocomplete input
      * @param wh_id
      * @param context
      */
-    this.getNames = function (wh_id, context) {
+    getNames(wh_id, context) {
         $.ajax({
             url: '/warehouse/checkout/' + wh_id + '/products',
             success: function (res) {
@@ -267,14 +55,43 @@ Checkout = function () {
                 context.setAutoComplete();
             }
         });
-    };
+    }
 
     /**
-     * Set Checkout Product Input Fields
+     * Set Product names for checkout autocomplete input
+     */
+    setAutoComplete() {
+        var _this = this,
+            wh_id = this.getWareHouseId();
+        $("#c_p_name").autocomplete({
+            source: this.productNames,
+            select: function (event, ui) {
+                var label = ui.item.label;
+                var value = ui.item.value;
+                _this.clearFields(['#c_p_quantity', '#c_p_r_price']);
+                _this.setProductDetails(wh_id, value);
+                $("#c_p_quantity").focus();
+                _this.errors.clearErrors();
+            }
+        });
+    }
+
+    /**
+     * Clear Checkout input fields after add product
+     * @param fields
+     */
+    clearFields(fields) {
+        fields.forEach(function (field) {
+            $(field).val('');
+        });
+    }
+
+    /**
+     * Set Add Product Details
      * @param wh_id
      * @param name
      */
-    this.setProductDetails = function (wh_id, name) {
+    setProductDetails(wh_id, name) {
         var _this = this;
         $.ajax({
             type: 'GET',
@@ -288,19 +105,209 @@ Checkout = function () {
                 _this.setUnitPrice(_this.product.unit_price);
             }
         });
-    };
+    }
 
     /**
-     * Check Product Quantity
+     * Set Unit price
+     * @param quantity
      */
-    this.validateQuantity = function (wh_id, name) {
+    setUnitPrice(quantity) {
+        $("#c_p_unit_price").val(quantity);
+    }
+
+    /**
+     * Get Product names
+     * @returns {*}
+     */
+    getName() {
+        return $.trim($("#c_p_name").val());
+    }
+
+    /**
+     * Get Product quantity
+     * @returns {*}
+     */
+    getQuantity() {
+        return $.trim($("#c_p_quantity").val());
+    }
+
+    /**
+     * Get Retail price
+     * @returns {*}
+     */
+    getRetailPrice() {
+        return $.trim($("#c_p_r_price").val());
+    }
+
+    /**
+     * Get Unit price
+     * @returns {*}
+     */
+    getUnitPrice() {
+        return $.trim($("#c_p_unit_price").val());
+    }
+
+    /**
+     * Get warehouse id
+     * @returns {*|jQuery}
+     */
+    getWareHouseId() {
+        return $(".checkout").attr('data-wh-id');
+    }
+
+    /**
+     * Process Checkout Form Submission
+     * @param e
+     */
+    checkout(e) {
+        var _this = e.data.context,
+            name = _this.getCheckoutName(),
+            address = _this.getCheckoutAddress(),
+            phone_no = _this.getCheckoutPhoneNo();
+        $.ajax({
+            type: "POST",
+            url: '/warehouse/checkout/transaction',
+            data: {
+                wh_id: _this.getWareHouseId(),
+                _token: _this.getToken(),
+                items: JSON.stringify(_this.products),
+                buyer: name,
+                address: address,
+                phone: phone_no
+            },
+            success: function (res) {
+                if (res) {
+                    $(".checkout-confirmation").modal('show');
+                    $('.checkout-confirmation').find('p').text('Checkout Successful, to view transaction record visit warehouse transactions page');
+                    _this.clearCheckout();
+                    _this.setCheckoutTotals();
+                    _this.products = [];
+                }
+            }
+        });
+    }
+
+    /**
+     * Remove items from checkout
+     */
+    clearCheckout() {
+        this.clearCheckoutFields();
+        $("#checkout-list").find('.item').remove();
+        this.handleCheckoutSubmit();
+    }
+
+    /**
+     * Get Checkout Buyer name
+     * @returns {*}
+     */
+    getCheckoutName() {
+        return $.trim($('#receipt_name').val());
+    }
+
+    /**
+     * Get Checkout Buyer Address
+     * @returns {*}
+     */
+    getCheckoutAddress() {
+        return $.trim($('#receipt_address').val());
+    }
+
+    /**
+     * Get Checkout Buyer phone #
+     * @returns {*}
+     */
+    getCheckoutPhoneNo() {
+        return $.trim($('#receipt_no').val());
+    }
+
+    /**
+     * Add Product to checkout list
+     * @param e
+     */
+    addProduct(e) {
+        var _this = e.data.context;
+        if (e.which == 1 || e.which == 13) {
+            var name = _this.getName(),
+                quantity = _this.getQuantity(),
+                r_price = _this.getRetailPrice(),
+                unit_price = _this.getUnitPrice(),
+                wh_id = _this.getWareHouseId();
+
+            _this.errors.clearErrors();
+            if (name.length && quantity.length && r_price.length && unit_price.length &&
+                _this.productInProducts(name) &&
+                _this.isInt(quantity) &&
+                _this.isNumeric(quantity) &&
+                _this.isNumeric(r_price) &&
+                _this.isNumeric(unit_price)
+            ) {
+                _this.validateQuantity(wh_id, name);
+            } else {
+                if (!name.length) {
+                    _this.errors.add("Product Name Required");
+                }
+
+                if (!quantity.length) {
+                    _this.errors.add("Product Quantity Required");
+                }
+
+                if (!r_price.length) {
+                    _this.errors.add("Product Retail Price Required");
+                }
+
+                if (!unit_price.length) {
+                    _this.errors.add("Product Unit Price Required");
+                }
+
+                if (!_this.productInProducts(name)) {
+                    _this.errors.add("Product Doesn't Exist in Stock");
+                }
+
+                if (!_this.isInt(quantity)) {
+                    _this.errors.add("Quantity must be an Integer");
+                }
+
+                if (!_this.isNumeric(quantity)) {
+                    _this.errors.add("Invalid Quantity");
+                }
+
+                if (!_this.isNumeric(r_price)) {
+                    _this.errors.add("Invalid Retail Price");
+                }
+
+                if (!_this.isNumeric(unit_price)) {
+                    _this.errors.add("Invalid Unit Price");
+                }
+                _this.errors.appendErrorsToDOM();
+                _this.errors.showErrorDOM();
+            }
+        } else {
+            _this.errors.clearErrors();
+        }
+    }
+
+    /**
+     * Check if product exist in Checkout Products list
+     * @param product
+     * @returns {boolean}
+     */
+    productInProducts(product) {
+        return (this.productNames.indexOf(product) > -1);
+    }
+
+    /**
+     * Validate product quanity in stock
+     * @param wh_id
+     * @param name
+     */
+    validateQuantity(wh_id, name) {
         var _this = this,
             name = this.getName(),
             quantity = this.getQuantity(),
             r_price = this.getRetailPrice(),
             unit_price = this.getUnitPrice();
 
-        this.clearErrors();
+        this.errors.clearErrors();
 
         $.ajax({
             url: '/warehouse/checkout/product/quantity',
@@ -310,9 +317,9 @@ Checkout = function () {
             },
             success: function (res) {
                 if (quantity > parseInt(res)) {
-                    _this.errors.push("Not Enough Stock Available for this Product.");
-                    _this.appendErrorsOnDom();
-                    _this.showErrorDoM();
+                    _this.errors.add("Not Enough Stock Available for this Product.");
+                    _this.errors.appendErrorsToDOM();
+                    _this.errors.showErrorDOM();
                 } else {
                     _this.product.name = name;
                     _this.product.quantity = quantity;
@@ -320,11 +327,11 @@ Checkout = function () {
                     _this.product.unit_price = unit_price;
                     _this.product.total_quantity = res;
 
-                    if(_this.findIndex(name) != -1){
-                        _this.errors.push("Products already added to checkout list, use edit feature to change values.");
-                        _this.appendErrorsOnDom();
-                        _this.showErrorDoM();
-                    }else{
+                    if (_this.findIndex(name) != -1) {
+                        _this.errors.add("Products already added to checkout list, use edit feature to change values.");
+                        _this.errors.appendErrorsToDOM();
+                        _this.errors.showErrorDOM();
+                    } else {
                         _this.products.push(_this.product);
                         _this.renderToCheckout(_this.product);
                         _this.clearCheckoutFields();
@@ -334,27 +341,27 @@ Checkout = function () {
                 }
             }
         });
-    };
+    }
 
     /**
-     * Show Checkout Options on If products exist in checkout list
+     * Find Index of product in Checkout products list
+     * @param name
+     * @returns {number}
      */
-    this.handleCheckoutSubmit = function(){
-        var items_count = $("#checkout-list").find('.item').length;
-        console.log(items_count);
-
-        if(items_count > 0){
-            $(".checkout-actions").show();
-        }else{
-            $(".checkout-actions").hide();
+    findIndex(name) {
+        for (var i = 0; i < this.products.length; i++) {
+            if (this.products[i].name === name) {
+                return i;
+            }
         }
-    };
+        return -1;
+    }
 
     /**
-     * Render Product to Checkout List
+     * Render product to checkout list
      * @param product
      */
-    this.renderToCheckout = function (product) {
+    renderToCheckout(product) {
         var $item = `<tr class='item' data-name='${product.name}'>
                         <td class='item-name'>${product.name}</td>
                         <td class='item-quantity'>${product.quantity}</td>
@@ -370,13 +377,64 @@ Checkout = function () {
         $("#checkout-list").append($item);
         this.setEditDelete();
         this.setCheckoutTotals();
-    };
+    }
+
+    /**
+     * Set Checkout total on product add
+     */
+    setCheckoutTotals() {
+        $(".checkout-actions").find('.total-items').text(this.getTotalItems());
+        $(".checkout-actions").find('.cost-total').text(this.getTotalCost());
+        $(".checkout-actions").find('.retail-total').text(this.getProductsTotalRetail());
+    }
+
+    /**
+     * Get Products Total Retail
+     * @returns {number}
+     */
+    getProductsTotalRetail() {
+        var sum = 0;
+        for (var i = 0; i < this.products.length; i++) {
+            sum += parseFloat(this.products[i].r_price * this.products[i].quantity);
+        }
+        return sum;
+    }
+
+    /**
+     * Get Products Total Cost
+     * @returns {number}
+     */
+    getTotalCost() {
+        var sum = 0;
+        for (var i = 0; i < this.products.length; i++) {
+            sum += parseFloat(this.products[i].unit_price * this.products[i].quantity);
+        }
+        return sum;
+    }
+
+    /**
+     * Get Total Productsi in Checkout list
+     * @returns {Number}
+     */
+    getTotalItems() {
+        return this.products.length;
+    }
+
+    /**
+     * Set Edit Delete Event handlers
+     * on new Checkout list item
+     */
+    setEditDelete() {
+        $(".item-edit,.item-delete").unbind('click');
+        $(".item-edit").on('click', {context: this}, this.editProduct);
+        $(".item-delete").on('click', {context: this}, this.deleteProduct);
+    }
 
     /**
      * Edit Product
      * @param e
      */
-    this.editProduct = function(e){
+    editProduct(e) {
         var _this = e.data.context,
             item_name = $(this).parents('.item').attr('data-name'),
             item_quantity = $.trim($(this).parents('.item').children('.item-quantity').text()),
@@ -390,17 +448,17 @@ Checkout = function () {
 
         _this.products.splice(_this.findIndex(item_name), 1);
         $(this).parents('.item').remove();
-        _this.clearErrors();
+        _this.errors.clearErrors();
         $("#c_p_quantity").focus();
         _this.handleCheckoutSubmit();
         _this.setCheckoutTotals();
-    };
+    }
 
     /**
-     * Delete Product
+     * Delete Product From Checkout Products list
      * @param e
      */
-    this.deleteProduct = function(e){
+    deleteProduct(e) {
         var _this = e.data.context,
             item_name = $(this).parents('.item').attr('data-name');
 
@@ -408,174 +466,78 @@ Checkout = function () {
         $(this).parents('.item').remove();
         _this.handleCheckoutSubmit();
         _this.setCheckoutTotals();
-    };
+    }
 
     /**
-     * Add Edit/Delete item event listeners
+     * Clear Checkout field on product add in checkout list
      */
-    this.setEditDelete = function(){
-        $(".item-edit,.item-delete").unbind('click');
-
-        $(".item-edit").on('click', {context :this }, this.editProduct);
-        $(".item-delete").on('click', {context : this}, this.deleteProduct);
-    };
+    clearCheckoutFields() {
+        $("#c_p_name").val('').focus();
+        $("#c_p_quantity").val('');
+        $("#c_p_r_price").val('');
+        $("#c_p_unit_price").val('');
+        $("#receipt_name, #receipt_address, #receipt_no").val('');
+        this.product = {};
+    }
 
     /**
-     * Checkout Product Name custom submit handlers
+     * Show Checkout footer options if item_count
      */
-    this.handleProductSubmit = function(){
+    handleCheckoutSubmit() {
+        var items_count = $("#checkout-list").find('.item').length;
+        console.log(items_count);
+
+        if (items_count > 0) {
+            $(".checkout-actions").show();
+        } else {
+            $(".checkout-actions").hide();
+        }
+    }
+
+    /**
+     * Set Product details event on Product name input
+     */
+    handleProductSubmit() {
         var _this = this;
-        $("#c_p_name").on('keypress', function(e){
-            _this.clearErrors();
-            if(e.which == 13){
+        $("#c_p_name").on('keypress', function (e) {
+            _this.errors.clearErrors();
+            if (e.which == 13) {
                 console.log("Set Product");
 
                 var name = _this.getName(),
                     wh_id = _this.getWareHouseId();
 
-                if(_this.productInProducts(name)){
-                    _this.clearFields(['#c_p_quantity' , '#c_p_r_price']);
+                if (_this.productInProducts(name)) {
+                    _this.clearFields(['#c_p_quantity', '#c_p_r_price']);
                     _this.setProductDetails(wh_id, name);
                     $("#c_p_quantity").focus();
-                }else{
-                    _this.errors.push("Product Doesn't Exist in Stock");
-                    _this.appendErrorsOnDom();
-                    _this.showErrorDoM();
+                } else {
+                    _this.errors.add("Product Doesn't Exist in Stock");
+                    _this.errors.appendErrorsToDOM();
+                    _this.errors.showErrorDOM();
                 }
             }
         });
-    };
+    }
 
-    /**
-     * Handle Add Product To Checkout List
-     * @param e
-     */
-    this.addProduct = function (e) {
-        var _this = e.data.context;
-        if(e.which == 1 || e.which == 13){
-                var name = _this.getName(),
-                quantity = _this.getQuantity(),
-                r_price = _this.getRetailPrice(),
-                unit_price = _this.getUnitPrice(),
-                wh_id = _this.getWareHouseId();
+    constructor() {
+        this.productNames = [];
 
-            _this.clearErrors();
-            if (name.length && quantity.length && r_price.length && unit_price.length &&
-                _this.productInProducts(name) &&
-                _this.isInt(quantity) &&
-                _this.isNumeric(quantity) &&
-                _this.isNumeric(r_price) &&
-                _this.isNumeric(unit_price)
-            ) {
-                _this.validateQuantity(wh_id, name);
-            } else {
-                if (!name.length) {
-                    _this.errors.push("Product Name Required");
-                }
+        this.product = {};
 
-                if (!quantity.length) {
-                    _this.errors.push("Product Quantity Required");
-                }
+        this.products = [];
 
-                if (!r_price.length) {
-                    _this.errors.push("Product Retail Price Required");
-                }
+        this.errors = [];
 
-                if (!unit_price.length) {
-                    _this.errors.push("Product Unit Price Required");
-                }
+        this.errors = new Errors('#c_p_error');
 
-                if (!_this.productInProducts(name)) {
-                    _this.errors.push("Product Doesn't Exist in Stock");
-                }
-
-                if (!_this.isInt(quantity)) {
-                    _this.errors.push("Quantity must be an Integer");
-                }
-
-                if (!_this.isNumeric(quantity)) {
-                    _this.errors.push("Invalid Quantity");
-                }
-
-                if (!_this.isNumeric(r_price)) {
-                    _this.errors.push("Invalid Retail Price");
-                }
-
-                if (!_this.isNumeric(unit_price)) {
-                    _this.errors.push("Invalid Unit Price");
-                }
-                _this.appendErrorsOnDom();
-                _this.showErrorDoM();
-            }
-        }else{
-            _this.clearErrors();
-        }
-    };
-
-    /**
-     * Get Checkout Buyer Name
-     * @returns {*}
-     */
-    this.getCheckoutName = function(){
-        return $.trim($('#receipt_name').val());
-    };
-
-    /**
-     *
-     * @returns {*}
-     */
-    this.getCheckoutAddress = function() {
-        return $.trim($('#receipt_address').val());
-    };
-
-    this.getCheckoutPhoneNo = function(){
-        return $.trim($('#receipt_no').val());
-    };
-
-    /**
-     * Process Checkout
-     * @param e
-     */
-    this.checkout = function(e){
-        var _this = e.data.context,
-            name = _this.getCheckoutName(),
-            address = _this.getCheckoutAddress(),
-            phone_no = _this.getCheckoutPhoneNo();
-        $.ajax({
-            type : "POST",
-            url : '/warehouse/checkout/transaction',
-            data : {
-                wh_id : _this.getWareHouseId(),
-                _token : _this.getToken(),
-                items : JSON.stringify(_this.products),
-                buyer : name,
-                address : address,
-                phone : phone_no
-            },
-            success : function(res){
-                if(res){
-                    $(".checkout-confirmation").modal('show');
-                    $('.checkout-confirmation').find('p').text('Checkout Successful, to view transaction record visit warehouse transactions page');
-                    _this.clearCheckout();
-                    _this.setCheckoutTotals();
-                    _this.products = [];
-                }
-            }
-        });
-    };
-
-    /**
-     * Initialize Checkout
-     */
-    this.init = function () {
         var wh_id = this.getWareHouseId();
         this.getNames(wh_id, this);
         this.handleProductSubmit();
         $("#product-add").on('click', {context: this}, this.addProduct);
-        $("#c_p_quantity, #c_p_r_price").on('keypress', {context : this}, this.addProduct);
-        $("#go-checkout").on('click', {context : this}, this.checkout);
-    };
-};
+        $("#c_p_quantity, #c_p_r_price").on('keypress', {context: this}, this.addProduct);
+        $("#go-checkout").on('click', {context: this}, this.checkout);
+    }
+}
 
 var checkout = new Checkout();
-checkout.init();

@@ -1,253 +1,95 @@
-var Product = function () {
-    this.errors = [];
-
+class Product{
     /**
-     * Returns Product Name
-     * @returns {*}
+     * Is an Integer
+     * @param value
+     * @returns {boolean}
      */
-    this.getName = function () {
-        return $.trim($("#p_name").val());
-    };
-
-    /**
-     * Returns Product Unit Price
-     * @returns {*}
-     */
-    this.getUnitPrice = function () {
-        return $.trim($("#unit_price").val());
-    };
-
-    /**
-     * Returns Product Quantity
-     * @returns {*}
-     */
-    this.getQuantity = function () {
-        return $.trim($("#p_quantity").val());
-    };
-
-    /**
-     * Returns Warehouse ID
-     * @returns {*}
-     */
-    this.getWareHouseId = function () {
-        return $.trim($("#w_id").val());
-    };
-
-    /**
-     * Return Old Product Name
-     * @returns {*|jQuery}
-     */
-    this.getOldName = function () {
-        return $("#p_name").attr('data-old-name');
+    isInt(value){
+        var er = /^-?[0-9]+$/;
+        return er.test(value);
     }
 
     /**
-     * Check if number is an integer
+     * Is a Numeric Value
      * @param value
      * @returns {boolean}
      */
-    this.isInt = function (value) {
-        var er = /^-?[0-9]+$/;
-        return er.test(value);
-    };
-
-    /**
-     * Check if number is numeric
-     * @param value
-     * @returns {boolean}
-     */
-    this.isNumeric = function (value) {
+    isNumeric(value){
         return !isNaN(value);
-    };
+    }
 
     /**
-     * Check if Number is postitive
+     * Is a Positive Number
      * @param value
      * @returns {boolean}
      */
-    this.isAPositiveNumber = function(value){
+    isAPositiveNumber(value){
         return (value > 0);
-    };
+    }
 
     /**
-     * Return CSRF Token value
+     * Get CSRF Token
      * @returns {*}
      */
-    this.getToken = function () {
+    getToken(){
         return $.trim($("#token").val());
     }
 
     /**
-     * Returns Product ID
+     * Get Product ID
      * @returns {*}
      */
-    this.getProductID = function () {
+    getProductID(){
         return $.trim($("#p_id").val());
-    };
+    }
 
     /**
-     * Clean all Form Errors
+     * Get Product Name
+     * @returns {*}
      */
-    this.clearErrors = function () {
-        this.errors = [];
-        this.hideErrorDoM();
-    };
+    getName(){
+        return $.trim($("#p_name").val());
+    }
 
     /**
-     * Clear and Hide Form Error DOM
+     * Get Old Product Name (For Edit Product)
+     * @returns {*|jQuery}
      */
-    this.hideErrorDoM = function () {
-        $("#p_error").slideUp();
-        $("#p_error").html('');
-    };
+    getOldName(){
+        return $("#p_name").attr('data-old-name');
+    }
 
     /**
-     * Display Error DOM
+     * Get Product Unit Price
+     * @returns {*}
      */
-    this.showErrorDoM = function () {
-        $("#p_error").slideDown();
-    };
+    getUnitPrice(){
+        return $.trim($("#unit_price").val());
+    }
 
     /**
-     * Append Errors to DOM
+     * Get Product Quantity
+     * @returns {*}
      */
-    this.appendErrorsOnDom = function () {
-        this.errors.forEach(function (err) {
-            $("<li>" + err + "</li>").appendTo("#p_error");
-        });
-    };
+    getQuantity(){
+        return $.trim($("#p_quantity").val());
+    }
 
     /**
-     * Verify if Product Exist
-     * @param wh_id
-     * @param name
-     * @param context
+     * Get Warehouse ID
+     * @returns {*}
      */
-    this.verifyProductExist = function (wh_id, name, action, context) {
-        $.ajax({
-            url: '/warehouse/product/exist',
-            type: 'GET',
-            data: {
-                name: name,
-                wh_id: wh_id
-            },
-            success: function (res) {
-                if (res) {
-                    context.clearErrors();
-                    context.errors.push("Item Already Exist.");
-                    context.appendErrorsOnDom();
-                    context.showErrorDoM();
-                    context.addEventHanlder();
-                } else {
-                    if (action === 'edit') {
-                        context.updateProduct(
-                            context.getWareHouseId(),
-                            context.getProductID(),
-                            context.getName(),
-                            context.getUnitPrice(),
-                            context.getQuantity(),
-                            context.getToken()
-                        );
-                    }
-
-                    if (action === 'add') {
-                        context.saveProduct(
-                            context.getWareHouseId(),
-                            context.getName(),
-                            context.getUnitPrice(),
-                            context.getQuantity(),
-                            context.getToken()
-                        );
-                    }
-                }
-            }
-        })
-    };
+    getWareHouseId(){
+        return $.trim($("#w_id").val());
+    }
 
     /**
-     * Save Product
-     * @param wh_id
-     * @param p_id
-     * @param name
-     * @param price
-     * @param r_price
-     * @param quantity
-     * @param token
-     */
-    this.saveProduct = function (wh_id, name, unit_price, quantity, token) {
-        $.ajax({
-            url: '/warehouse/product/add',
-            type: 'POST',
-            data: {
-                _token: token,
-                id: wh_id,
-                p_name: name,
-                unit_price: unit_price,
-                p_quantity: quantity
-            },
-            success: function (res) {
-                if (res) {
-                    window.location = '/warehouse/' + wh_id + '/products';
-                }
-            }
-        });
-    };
-
-    /**
-     * Update Product
-     * @param wh_id
-     * @param p_id
-     * @param name
-     * @param price
-     * @param r_price
-     * @param quantity
-     * @param token
-     */
-    this.updateProduct = function (wh_id, p_id, name, unit_price, quantity, token) {
-        $.ajax({
-            url: '/warehouse/product/update',
-            type: 'POST',
-            data: {
-                _token: token,
-                id: wh_id,
-                p_id: p_id,
-                p_name: name,
-                unit_price: unit_price,
-                p_quantity: quantity
-            },
-            success: function (res) {
-                if (res) {
-                    window.location = '/warehouse/' + wh_id + '/products';
-                }
-            }
-        });
-    };
-
-    /**
-     * Detects a change in Product Name on Edit Form
-     * @returns {boolean}
-     */
-    this.detectEditChange = function () {
-        var name = this.getName(),
-            old_name = this.getOldName();
-
-        return (name === old_name);
-    };
-
-    /**
-     * Redirect back to warehouse page
-     * @param wd_id
-     */
-    this.redirectAsUnChanged = function (wd_id) {
-        window.location = '/warehouse/' + wd_id + '/products';
-    };
-
-    /**
-     * Validate Edit Product Form Fields
+     * Validate Form Submit on New Product
      * @param e
      * @returns {boolean}
      */
-    this.validateForm = function (e) {
+    validateForm(e){
+        console.log("Validate Form");
         e.preventDefault();
         var _this = e.data.context,
             action = (e.data.action === 'add') ? 'add' : 'edit',
@@ -265,7 +107,7 @@ var Product = function () {
         ) {
             if (!_this.detectEditChange()) {
                 _this.verifyProductExist(wh_id, name, action, _this);
-                _this.hideErrorDoM();
+                _this.errors.hideErrorDOM();
             } else {
                 if (action === 'edit') {
                     _this.updateProduct(
@@ -290,102 +132,172 @@ var Product = function () {
             }
         } else {
             _this.addEventHanlder();
-            _this.clearErrors();
+            _this.errors.clearErrors();
             if (!_this.isNumeric(unit_price)) {
-                _this.errors.push("Price must be a numerical value.");
+                _this.errors.add("Price must be a numerical value.");
             }
 
             if (!_this.isInt(p_quantity)) {
-                _this.errors.push("Quantity must be a Integer value.");
+                _this.errors.add("Quantity must be a Integer value.");
             }
 
             if(!_this.isAPositiveNumber(unit_price)){
-                _this.errors.push("Invalid Price value.");
+                _this.errors.add("Invalid Price value.");
             }
 
             if(!_this.isAPositiveNumber(p_quantity)){
-                _this.errors.push("Invalid Quantity value.");
+                _this.errors.add("Invalid Quantity value.");
             }
 
-            _this.appendErrorsOnDom();
-            _this.showErrorDoM();
+            _this.errors.appendErrorsToDOM();
+            _this.errors.showErrorDOM();
         }
         return false;
-    };
+    }
 
     /**
-     * Disable Add Product form submit if validation fails
+     * Check if product already exist
+     * @param wh_id
+     * @param name
+     * @param action
+     * @param context
      */
-    this.removeEventHandlers = function(){
-        $("#add-product-form").unbind("submit");
-    };
+    verifyProductExist(wh_id, name, action, context){
+        $.ajax({
+            url: '/warehouse/product/exist',
+            type: 'GET',
+            data: {
+                name: name,
+                wh_id: wh_id
+            },
+            success: function (res) {
+                if (res) {
+                    context.errors.clearErrors();
+                    context.errors.add("Item Already Exist.");
+                    context.errors.appendErrorsToDOM();
+                    context.errors.showErrorDOM();
+                    context.addEventHanlder();
+                } else {
+                    if (action === 'edit') {
+                        context.updateProduct(
+                            context.getWareHouseId(),
+                            context.getProductID(),
+                            context.getName(),
+                            context.getUnitPrice(),
+                            context.getQuantity(),
+                            context.getToken()
+                        );
+                    }
 
-    /**
-     * Enable Add Product form submit if validation passes
-     */
-    this.addEventHanlder = function(){
-        $("#add-product-form").on("submit", {context: this, action: 'add'}, this.validateForm);
-    };
-
-    /**
-     * Product Search if search input fields has query
-     * @param e
-     */
-    this.productSearch = function(e){
-        e.preventDefault();
-        var _this = e.data.context,
-            query = $.trim($(this).val()).toLowerCase();
-
-        var $products = $(".product-search-name");
-        if(query.length){
-            console.log($products.length);
-            for(var i = 0; i < $products.length; i++){
-                var value = $.trim($($products[i]).attr('data-name')).toLowerCase();
-                if(value.search(query) != -1){
-                    $($products[i]).parent('tr').slideDown();
-                }else{
-                    $($products[i]).parent('tr').slideUp();
+                    if (action === 'add') {
+                        context.saveProduct(
+                            context.getWareHouseId(),
+                            context.getName(),
+                            context.getUnitPrice(),
+                            context.getQuantity(),
+                            context.getToken()
+                        );
+                    }
                 }
             }
-        }else{
-            $($products).parents('tr').slideDown();
-        }
-    };
+        });
+    }
 
     /**
-     * Show Product transaction details
-     */
-    this.showTransactionsModal = function(){
-        $("#product-dt-modal").modal('show');
-    };
-
-    /**
-     * Hide Product transaction details
-     */
-    this.hideTransactionModal = function(){
-        $("#product-dt-modal").modal('hide');
-    };
-
-    /**
-     * Clear Product items from transaction details modal
-     */
-    this.clearTransactionModalBody = function(){
-        $("#product-dt-modal .modal-body .table").empty();
-    };
-
-    /**
-     * Set Transaction details header with product name
+     * Save Product
+     * @param wh_id
      * @param name
+     * @param unit_price
+     * @param quantity
+     * @param token
      */
-    this.setTransactionProductName = function(name){
-        $("#product-dt-title").text(name + ' Details');
-    };
+    saveProduct(wh_id, name, unit_price, quantity, token){
+        $.ajax({
+            url: '/warehouse/product/add',
+            type: 'POST',
+            data: {
+                _token: token,
+                id: wh_id,
+                p_name: name,
+                unit_price: unit_price,
+                p_quantity: quantity
+            },
+            success: function (res) {
+                if (res) {
+                    window.location = '/warehouse/' + wh_id + '/products';
+                }
+            }
+        });
+    }
 
     /**
-     * Show Product transactions details
+     * Update Product
+     * @param wh_id
+     * @param p_id
+     * @param name
+     * @param unit_price
+     * @param quantity
+     * @param token
+     */
+    updateProduct(wh_id, p_id, name, unit_price, quantity, token){
+        $.ajax({
+            url: '/warehouse/product/update',
+            type: 'POST',
+            data: {
+                _token: token,
+                id: wh_id,
+                p_id: p_id,
+                p_name: name,
+                unit_price: unit_price,
+                p_quantity: quantity
+            },
+            success: function (res) {
+                if (res) {
+                    window.location = '/warehouse/' + wh_id + '/products';
+                }
+            }
+        });
+    }
+
+    /**
+     * Check if Product Fields are changed on (EDIT)
+     * @returns {boolean}
+     */
+    detectEditChange(){
+        var name = this.getName(),
+            old_name = this.getOldName();
+
+        return (name === old_name);
+    }
+
+    /**
+     * Redirect back to warehouse Products page
+     * if no change detected on (EDIT)
+     * @param wd_id
+     */
+    redirectAsUnChanged(wd_id){
+        window.location = '/warehouse/' + wd_id + '/products';
+    }
+
+    /**
+     * Remove Add Product Form Submission Event handlers
+     */
+    removeEventHandlers(){
+        $("#add-product-form").unbind("submit");
+    }
+
+    /**
+     * Attach Add Prdocut Form Submission Event handlers
+     */
+    addEventHanlder(){
+        $("#add-product-form").on("submit", {context: this, action: 'add'}, this.validateForm);
+    }
+
+    /**
+     * Show Product Transactions Details
      * @param e
      */
-    this.showProductDetails = function(e){
+    showProductDetails(e){
         e.preventDefault();
         var _this = e.data.context,
             prod_name = $.trim($(this).attr('data-product-name')),
@@ -401,8 +313,8 @@ var Product = function () {
             success : function(transactions){
                 console.log(transactions);
                 if(transactions.length){
+                    _this.setTransactionProductName(prod_name);
                     _this.appendTableHeader();
-                    _this.appendTableBody();
                     _this.appendItemsToDOM(transactions);
                     _this.showTransactionsModal();
                 }
@@ -411,93 +323,94 @@ var Product = function () {
     }
 
     /**
-     * Edit Product Event Handlers
+     * Show Product Transaction Details Modal
      */
-    this.init = function () {
-        $("#edit-product-form").on("submit", {context: this, action: 'edit'}, this.validateForm);
+    showTransactionsModal(){
+        $("#product-dt-modal").modal('show');
+    }
+
+    /**
+     * Clear Product Transaction Details Modal Table
+     */
+    clearTransactionModalBody(){
+        $("#product-dt-modal .modal-body .table").empty();
+    }
+
+    /**
+     * Set Product Transaction Details Modall Title
+     * @param name
+     */
+    setTransactionProductName(name){
+        $("#product-dt-title").text(name + ' Details');
+    }
+
+    /**
+     * Append Product Transaction Details Modal Table Header
+     */
+    appendTableHeader(){
+        var head_titles = ['# ID', 'Quantity', 'Total Cost', 'Total Retail', 'Profit', 'Date', 'Time'];
+        var $head = `<thead><tr><th>${head_titles.join('</th><th>')}</th></tr></thead>`;
+        $("#product-dt-modal .modal-body .table").append($head);
+    }
+
+    /**
+     * Append Products to Transaction Details Modal Table
+     * @param transactions
+     */
+    appendItemsToDOM(transactions){
+        transactions.forEach(function (transaction) {
+            var $transaction = [
+                transaction.id,
+                transaction.item_quantity,
+                transaction.cost_total,
+                transaction.retail_total,
+                transaction.retail_total - transaction.cost_total,
+                moment(transaction.created_at).format('YYYY-MM-DD'),
+                moment(transaction.created_at).format('HH:mm:ss a')
+            ];
+            var $item = `<tbody><tr><td>${$transaction.join('</td><td>')}</td></tr></tbody>`;
+            $("#product-dt-modal .modal-body .table").append($item);
+        });
+    }
+
+    /**
+     * Search Product on List
+     * @param e
+     */
+    productSearch(e){
+        e.preventDefault();
+        var query = $.trim($(this).val()).toLowerCase();
+
+        var $products = $(".product-search-name");
+        if(query.length){
+            console.log($products.length);
+            for(var i = 0; i < $products.length; i++){
+                var value = $.trim($($products[i]).attr('data-name')).toLowerCase();
+                if(value.search(query) != -1){
+                    $($products[i]).parent('tr').slideDown();
+                }else{
+                    $($products[i]).parent('tr').slideUp();
+                }
+            }
+        }else{
+            $($products).parents('tr').slideDown();
+        }
+    }
+
+    constructor(){
+        this.errors = new Errors('#p_error');
+
+        // Add/Edit Product
         $("#add-product-form").on("submit", {context: this, action: 'add'}, this.validateForm);
-        $("#product-search").on('keyup', {context : this}, this.productSearch);
+        $("#edit-product-form").on("submit", {context: this, action: 'edit'}, this.validateForm);
+
+        // Product Transaction Details
         $(".product-details").on('click', {context : this}, this.showProductDetails);
         $('#product-dt-modal').on('hidden.bs.modal', {context :this }, this.clearTransactionModalBody);
-    };
-};
+
+        // Product Search
+        $("#product-search").on('keyup', {context : this}, this.productSearch);
+    }
+}
 
 var product = new Product();
-product.init();
-
-/**
- * Append Transaction details table body header
- */
-Product.prototype.appendTableHeader = function () {
-    var $head = `<thead>
-                    <tr>
-                        <th>
-                            # ID
-                        </th>
-
-                        <th>
-                            Quantity
-                        </th>
-
-                        <th>
-                            Total Cost
-                        </th>
-
-                        <th>
-                            Total Retail
-                        </th>
-                        <th>
-                            Profit
-                        </th>
-                        <th>
-                            Date
-                        </th>
-                        <th>
-                            Time
-                        </th>
-                    </tr>
-                </thead>`;
-    $("#product-dt-modal .modal-body .table").append($head);
-};
-
-/**
- * Append transaction details table body
- */
-Product.prototype.appendTableBody = function () {
-    var $body = `<tbody></tbody>`;
-    $("#product-dt-modal .modal-body .table").append($body);
-};
-
-/**
- * Append transactions list to transaction details table body
- * @param transactions
- */
-Product.prototype.appendItemsToDOM = function (transactions) {
-    transactions.forEach(function (transaction) {
-        var $transaction = `<tr>
-                                <td>
-                                    ${transaction.id}
-                                </td>
-
-                                <td>
-                                    ${transaction.item_quantity}
-                                </td>
-                                <td>
-                                    ${transaction.cost_total}
-                                </td>
-                                <td>
-                                    ${transaction.retail_total}
-                                </td>
-                                <td>
-                                    ${transaction.retail_total - transaction.cost_total}
-                                </td>
-                                <td>
-                                    ${moment(transaction.created_at).format('YYYY-MM-DD')}
-                                </td>
-                                <td>
-                                    ${moment(transaction.created_at).format('HH:mm:ss a')}
-                                </td>
-                            </tr>`;
-        $("#product-dt-modal .modal-body .table > tbody").append($transaction);
-    });
-};

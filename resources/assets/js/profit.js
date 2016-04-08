@@ -1,88 +1,54 @@
-var Transactions = function () {
-
-    this.fromDate = '';
-
-    this.toDate = '';
-
-    this.errors = [];
+class Transactions{
 
     /**
-     * Clean all Form Errors
+     * -------------------
+     * Search by date
+     * -------------------
      */
-    this.clearErrors = function () {
-        this.errors = [];
-        this.hideErrorDoM();
-    };
-
-    /**
-     * Clear and Hide Form Error DOM
-     */
-    this.hideErrorDoM = function () {
-        $("#transaction_error").slideUp();
-        $("#transaction_error").html('');
-    };
-
-    /**
-     * Display Error DOM
-     */
-    this.showErrorDoM = function () {
-        $("#transaction_error").slideDown();
-    };
-
-    /**
-     * Append Errors to DOM
-     */
-    this.appendErrorsOnDom = function () {
-        this.errors.forEach(function (err) {
-            $("<li>" + err + "</li>").appendTo("#transaction_error");
-        });
-    };
-
-    /**
-     * Get From Date Value
-     * @returns {*}
-     */
-    this.getFromDate = function () {
-        return $.trim($("#datepicker-from").val());
-    };
-
-    /**
-     * Get To Date Value
-     * @returns {*}
-     */
-    this.getToDate = function () {
-        return $.trim($("#datepicker-to").val());
-    };
 
     /**
      * Get Warehouse ID
      * @returns {*|jQuery}
      */
-    this.getWareHouseID = function () {
+    getWareHouseID() {
         return $(".transactions").attr('data-wh-id');
-    };
+    }
 
     /**
-     * Hide Transaction Static Listings
+     * Get From Date Input
+     * @returns {*}
      */
-    this.hideTransactionTable = function () {
-        $(".transaction-table").slideUp();
-    };
+    getFromDate() {
+        return $.trim($("#datepicker-from").val());
+    }
 
     /**
-     * Show Transaction Static Listings
+     * Get To Date Input
+     * @returns {*}
      */
-    this.showTransactionTable = function () {
-        $(".transaction-table").slideDown();
-    };
+    getToDate() {
+        return $.trim($("#datepicker-to").val());
+    }
 
     /**
-     * Set and Validate Dates
+     * Validate Date
+     * @param from
+     * @param to
+     * @returns {boolean}
+     */
+    validateDate(from, to) {
+        var from = new Date(from);
+        var to = new Date(to);
+        return (from <= to);
+    }
+
+    /**
+     * Set Date Ranges for search
      * @param type
      * @param date
      */
-    this.setDate = function (type, date) {
-        this.clearErrors();
+    setDate(type, date) {
+        this.errors.clearErrors();
         if (type === 'from') {
             this.fromDate = date;
         }
@@ -95,23 +61,23 @@ var Transactions = function () {
             if (this.validateDate(this.fromDate, this.toDate)) {
                 this.getTransactions(this.fromDate, this.toDate, this.getWareHouseID());
             } else {
-                this.errors.push('Invalid Date Range');
-                this.appendErrorsOnDom();
-                this.showErrorDoM();
+                this.errors.add('Invalid Date Range');
+                this.errors.appendErrorsToDOM();
+                this.errors.showErrorDOM();
                 this.showTransactionTable();
-                this.clearTransactions();
+                this.clearProductSearchTable();
             }
         }
-    };
+    }
 
     /**
-     * Get Transactions between date ranges
+     * GET Products by Date
      * @param from
      * @param to
      * @param wh_id
      */
-    this.getTransactions = function (from, to, wh_id) {
-        this.clearTransactions();
+    getTransactions(from, to, wh_id) {
+        this.clearProductSearchTable();
         var _this = this;
         $.ajax({
             type: 'GET',
@@ -125,26 +91,25 @@ var Transactions = function () {
 
                 if (res.length) {
                     _this.hideTransactionTable();
-                    _this.appendTableHeader();
-                    _this.appendTableBody();
-                    _this.appendItemsToDOM(res);
+                    _this.appendProductSearchTableHeader();
+                    _this.appendItemsToProductsSearchDOM(res);
                     _this.setTotals(res);
                     _this.setRange(from, to);
                 } else {
-                    _this.errors.push('No Transactions Available in between these dates.');
-                    _this.appendErrorsOnDom();
-                    _this.showErrorDoM();
+                    _this.errors.add('No Transactions Available in between these dates.');
+                    _this.errors.appendErrorsToDOM();
+                    _this.errors.showErrorDOM();
                     _this.showTransactionTable();
                 }
             }
         })
-    };
+    }
 
     /**
-     * Set Transaction Total Details
+     * Caculate Searched Products Total
      * @param transactions
      */
-    this.setTotals = function (transactions) {
+    setTotals(transactions) {
         var total_products = 0,
             total_cost = 0,
             total_retail = 0,
@@ -176,9 +141,13 @@ var Transactions = function () {
                         </tr>
                      </table>`;
         $("#transaction-lists").parent('.table-responsive').append($total);
-    };
+    }
 
-    this.setQuery = function(name){
+    /**
+     * Set Search Query on Panel
+     * @param name
+     */
+    setQuery(name){
         var $DOM = `<div class="panel panel-default">
                         <div class="panel-body">
                             Product Search : <b>${name}</b>
@@ -189,11 +158,11 @@ var Transactions = function () {
     }
 
     /**
-     * Set Date Search Ranges
+     * Set Date Range on Panel
      * @param from
      * @param to
      */
-    this.setRange = function (from, to) {
+    setRange(from, to) {
         var $DOM = `<div class="panel panel-default">
                         <div class="panel-body">
                             Transactions from <b>${from}</b> to <b>${to}</b>
@@ -201,25 +170,19 @@ var Transactions = function () {
                     </div>`;
 
         $("#transaction-lists").parent('.table-responsive').prepend($DOM);
-    };
+    }
 
     /**
-     * Validate Date Values
-     * @param from
-     * @param to
-     * @returns {boolean}
+     * -----------------------
+     * Search by Name
+     * -----------------------
      */
-    this.validateDate = function (from, to) {
-        var from = new Date(from);
-        var to = new Date(to);
-        return (from <= to);
-    };
 
     /**
-     * Search Product and calculate totals
+     * Profit Product Search
      * @param e
      */
-    this.productSearch = function(e){
+    productSearch(e){
         e.preventDefault();
         var _this = e.data.context,
             query = $.trim($(this).val()).toLowerCase();
@@ -228,11 +191,11 @@ var Transactions = function () {
             if(query.length){
                 _this.getTransactionsByName(query);
             }else{
-                _this.errors.push('Product name required!');
-                _this.appendErrorsOnDom();
-                _this.showErrorDoM();
+                _this.errors.add('Product name required!');
+                _this.errors.appendErrorsToDOM();
+                _this.errors.showErrorDOM();
                 _this.showTransactionTable();
-                _this.clearTransactions();
+                _this.clearProductSearchTable();
             }
         }
 
@@ -240,17 +203,17 @@ var Transactions = function () {
             $(this).val('');
             $(this).blur();
             _this.showTransactionTable();
-            _this.clearTransactions();
-            _this.hideErrorDoM();
+            _this.clearProductSearchTable();
+            _this.errors.hideErrorDOM();
         }
-    };
+    }
 
     /**
-     * Search Products by name
+     * Get Transactions by name
      * @param name
      */
-    this.getTransactionsByName = function (name) {
-        this.clearTransactions();
+    getTransactionsByName(name) {
+        this.clearProductSearchTable();
         var _this = this,
             wh_id = this.getWareHouseID();
         $.ajax({
@@ -264,26 +227,80 @@ var Transactions = function () {
 
                 if (res.length) {
                     _this.hideTransactionTable();
-                    _this.appendTableHeader();
-                    _this.appendTableBody();
-                    _this.appendItemsToDOM(res);
+                    _this.appendProductSearchTableHeader();
+                    _this.appendItemsToProductsSearchDOM(res);
                     _this.setTotals(res);
                     _this.setQuery(name);
-                    _this.hideErrorDoM();
+                    _this.errors.hideErrorDOM();
                 } else {
-                    _this.errors.push('No Transactions matched with product name.');
-                    _this.appendErrorsOnDom();
-                    _this.showErrorDoM();
+                    _this.errors.add('No Transactions matched with product name.');
+                    _this.errors.appendErrorsToDOM();
+                    _this.errors.showErrorDOM();
                     _this.showTransactionTable();
                 }
             }
         })
-    };
+    }
 
     /**
-     * Initialize Transaction Handlers
+     * Hide Transactions table
      */
-    this.init = function () {
+    hideTransactionTable() {
+        $(".transaction-table").slideUp();
+    }
+
+    /**
+     * Show Transactions table
+     */
+    showTransactionTable() {
+        $(".transaction-table").slideDown();
+    }
+
+    /**
+     * Append Product Search table header
+     */
+    appendProductSearchTableHeader () {
+        var head_titles = ['# ID', 'Name', 'Quantity', 'Total Cost', 'Total Retail', 'Profit', 'Date', 'Time'];
+        var $head = `<thead><tr><th>${head_titles.join('</th><th>')}</th></tr></thead>`;
+        $("#transaction-lists").append($head);
+    }
+
+    /**
+     * Append items to product search table
+     * @param transactions
+     */
+    appendItemsToProductsSearchDOM(transactions) {
+        transactions.forEach(function (transaction) {
+            var $transaction = [
+                transaction.id,
+                transaction.item_name,
+                transaction.item_quantity,
+                transaction.cost_total,
+                transaction.retail_total,
+                transaction.retail_total - transaction.cost_total,
+                moment(transaction.created_at).format('YYYY-MM-DD'),
+                moment(transaction.created_at).format('HH:mm:ss a')
+            ];
+
+            var $item = `<tbody><tr><td>${$transaction.join('</td><td>')}</td></tr></tbody>`;
+            $("#transaction-lists").append($item);
+        });
+    }
+
+    /**
+     * Clear Product Search table
+     */
+    clearProductSearchTable() {
+        $("#transaction-lists").html('');
+        $("#transaction-totals").remove();
+        $("#transaction-lists").parent('.table-responsive').find('.panel').remove();
+    }
+
+    constructor(){
+        this.fromDate = '';
+        this.toDate = '';
+        this.errors = new Errors('#transaction_error');
+
         var _this = this;
         $("#datepicker-from").datepicker({
             dateFormat: 'yy-mm-dd',
@@ -300,100 +317,7 @@ var Transactions = function () {
         });
 
         $("#p-product-name").on('keyup', {context : this}, this.productSearch);
-    };
-};
+    }
+}
 
 var transactions = new Transactions();
-transactions.init();
-
-/**
- * Transaction Dynamic Listings Header
- */
-Transactions.prototype.appendTableHeader = function () {
-    var $head = `<thead>
-                    <tr>
-                        <th>
-                            # ID
-                        </th>
-
-                        <th>
-                            Name
-                        </th>
-
-                        <th>
-                            Quantity
-                        </th>
-
-                        <th>
-                            Total Cost
-                        </th>
-
-                        <th>
-                            Total Retail
-                        </th>
-                        <th>
-                            Profit
-                        </th>
-                        <th>
-                            Date
-                        </th>
-                        <th>
-                            Time
-                        </th>
-                    </tr>
-                </thead>`;
-    $("#transaction-lists").append($head);
-};
-
-/**
- * Transaction Dynamic Body
- */
-Transactions.prototype.appendTableBody = function () {
-    var $body = `<tbody></tbody>`;
-    $("#transaction-lists").append($body);
-};
-
-/**
- * Append Rows to Dynamic Transaction Listing Table Body
- * @param transactions
- */
-Transactions.prototype.appendItemsToDOM = function (transactions) {
-    transactions.forEach(function (transaction) {
-        var $transaction = `<tr>
-                                <td>
-                                    ${transaction.id}
-                                </td>
-                                <td>
-                                    ${transaction.item_name}
-                                </td>
-                                <td>
-                                    ${transaction.item_quantity}
-                                </td>
-                                <td>
-                                    ${transaction.cost_total}
-                                </td>
-                                <td>
-                                    ${transaction.retail_total}
-                                </td>
-                                <td>
-                                    ${transaction.retail_total - transaction.cost_total}
-                                </td>
-                                <td>
-                                    ${moment(transaction.created_at).format('YYYY-MM-DD')}
-                                </td>
-                                <td>
-                                    ${moment(transaction.created_at).format('HH:mm:ss a')}
-                                </td>
-                            </tr>`;
-        $("#transaction-lists > tbody").append($transaction);
-    });
-};
-
-/**
- * Clear Dynamic Transaction Listings
- */
-Transactions.prototype.clearTransactions = function () {
-    $("#transaction-lists").html('');
-    $("#transaction-totals").remove();
-    $("#transaction-lists").parent('.table-responsive').find('.panel').remove();
-};

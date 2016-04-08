@@ -1,91 +1,23 @@
-var Receipt = function(){
-
-    this.fromDate = '';
-
-    this.toDate = '';
-
-    this.errors = [];
-
+class Receipt{
     /**
-     * Clean all Form Errors
-     */
-    this.clearErrors = function () {
-        this.errors = [];
-        this.hideErrorDoM();
-    };
-
-    /**
-     * Clear and Hide Form Error DOM
-     */
-    this.hideErrorDoM = function () {
-        $("#receipt_error").slideUp();
-        $("#receipt_error").html('');
-    };
-
-    /**
-     * Display Error DOM
-     */
-    this.showErrorDoM = function () {
-        $("#receipt_error").slideDown();
-    };
-
-    /**
-     * Append Errors to DOM
-     */
-    this.appendErrorsOnDom = function () {
-        this.errors.forEach(function (err) {
-            $("<li>" + err + "</li>").appendTo("#receipt_error");
-        });
-    };
-
-    /**
-     * Hide Transaction Static Listings
-     */
-    this.hideReceiptsTable = function () {
-        $(".receipts-table").slideUp();
-    };
-
-    /**
-     * Show Transaction Static Listings
-     */
-    this.showReceiptsTable = function () {
-        $(".receipts-table").slideDown();
-    };
-
-    /**
-     * Returns csrf token
+     * Get CSRF Token
      * @returns {*|jQuery}
      */
-    this.getToken = function(){
+    getToken(){
         return $(".receipts").attr('data-token');
     }
 
     /**
-     * Show Transaction Modal
+     * ------------------------
+     * Invoice Details
+     * ------------------------
      */
-    this.showTransactionsModal = function(){
-        $("#receipt-dt-modal").modal('show');
-    };
-
+    
     /**
-     * Hide Transaction details Modal
-     */
-    this.hideTransactionModal = function(){
-        $("#receipt-dt-modal").modal('hide');
-    };
-
-    /**
-     * Clear Transaction details Modal body
-     */
-    this.clearTransactionModalBody = function(){
-        $("#receipt-dt-modal .modal-body .table").empty();
-    };
-
-    /**
-     * Get Receipt items list
+     * Get and set Invoice details to Invoice Modal body
      * @param e
      */
-    this.showReceiptDetails = function(e){
+    showInvoiceDetails(e){
         e.preventDefault();
         var _this = e.data.context,
             id = $.trim($(this).attr('data-receipt-id')),
@@ -98,47 +30,109 @@ var Receipt = function(){
                 receipt_id : id
             },
             success : function(transactions){
-                console.log(transactions);
                 if(transactions.length){
-                    _this.setTransactionModalHeader(id, name);
-                    _this.setReceiptPrintID(id);
-                    _this.appendTableHeader();
-                    _this.appendTableBody();
-                    _this.appendItemsToDOM(transactions);
-                    _this.showTransactionsModal();
+                    _this.setInvoiceModalHeader(id, name);
+                    _this.setInvoicePrintID(id);
+                    _this.appendInvoiceModalTableHeader();
+                    _this.appendInvoiceModalTableBody();
+                    _this.appendItemsToInvoiceModalDOM(transactions);
+                    _this.showInvoiceModal();
                 }
             }
         });
-    };
-
-    this.setReceiptPrintID = function(id){
-        $("#print-receipt").attr('href','/print/receipt/'+id);
-    };
+    }
 
     /**
-     * Remove Receipt item from DOM
+     * Set Invoice Details Model Header
+     * @param id
+     * @param name
+     */
+    setInvoiceModalHeader(id, name){
+        $("#receipt-dt-name").text('Buyer : ' + name);
+        $("#receipt-dt-id").text('Receipt id # ' + id);
+    }
+
+    /**
+     * Set Receipt print button id
      * @param id
      */
-    this.removeReceiptFromList = function(id){
-        $(".receipt-list[data-receipt-id='" + id +"']").slideUp('slow');
-    };
+    setInvoicePrintID(id){
+        $("#print-receipt").attr('href','/print/receipt/'+id);
+    }
 
     /**
-     * Confirm Delete Dialogue for Receipt delete
+     * Appends Invoice Modal Table header
+     */
+    appendInvoiceModalTableHeader () {
+        var head_titles = ['Name', 'Quantity', 'Unit Cost', 'Total Retail', 'Date', 'Time'];
+        var $head = `<thead><tr><th>${head_titles.join('</th><th>')}</th></tr></thead>`;
+        $("#receipt-dt-modal .modal-body .table").append($head);
+    }
+
+    /**
+     * Appends Invoice Modal Table body
+     */
+    appendInvoiceModalTableBody () {
+        var $body = `<tbody></tbody>`;
+        $("#receipt-dt-modal .modal-body .table").append($body);
+    }
+
+    /**
+     * Append Items to Invoice Modal
+     * @param transactions
+     */
+    appendItemsToInvoiceModalDOM (transactions) {
+        var retail_total = this.getRetailTotal(transactions);
+        $("#receipt-dt-total").html('<b>Retail  Total</b> : Rs.' + retail_total);
+        transactions.forEach(function (transaction) {
+            var $transaction = [
+                transaction.item_name ,
+                transaction.item_quantity ,
+                transaction.cost_total / transaction.item_quantity,
+                transaction.retail_total,
+                moment(transaction.created_at).format('YYYY-MM-DD'),
+                moment(transaction.created_at).format('HH:mm:ss a')
+            ];
+            var $item = `<tr><td>${$transaction.join('</td><td>')}</td></tr>`;
+            $("#receipt-dt-modal .modal-body .table > tbody").append($item);
+        });
+    }
+
+    /**
+     * Show Invoice Details Modal
+     */
+    showInvoiceModal(){
+        $("#receipt-dt-modal").modal('show');
+    }
+
+    /**
+     * Remove Invoice Details Modal body
+     */
+    clearInvoiceModalBody(){
+        $("#receipt-dt-modal .modal-body .table").empty();
+    }
+
+    /**
+     * ---------------------------
+     * Delete Receipt
+     * ---------------------------
+     */
+
+    /**
+     * Confirm Receipt Delete
      * @param e
      */
-    this.confirmReceiptDelete = function(e){
-        var _this = e.data.context,
-            id = $(this).attr('data-receipt-id');
+    confirmReceiptDelete(e){
+        var id = $(this).attr('data-receipt-id');
         $("#delete-receipt").attr('data-receipt-id',id);
         $("#receipt-delete-modal").modal('show');
-    };
+    }
 
     /**
-     * Delete Receipt list item
+     * Delete Receipt
      * @param e
      */
-    this.deleteReceipt = function(e){
+    deleteReceipt(e){
         var _this = e.data.context,
             id = $(this).attr('data-receipt-id');
 
@@ -155,10 +149,62 @@ var Receipt = function(){
                 }
             }
         })
-    };
+    }
 
-    this.getReceipts = function(wh_id, query){
-        this._clearTransactions();
+    /**
+     * Remove Receipt item from table
+     * @param id
+     */
+    removeReceiptFromList(id){
+        $(".receipt-list[data-receipt-id='" + id +"']").slideUp('slow');
+    }
+
+    /**
+     *  -----------------------------
+     *  Receipt Search
+     *  -----------------------------
+     */
+
+    /**
+     * Search Receipt by Name or ID
+     * @param e
+     */
+    salesSearch(e){
+        e.preventDefault();
+        var _this = e.data.context,
+            query = $.trim($(this).val()).toLowerCase(),
+            wh_id = $.trim($(this).attr('data-warehouse'));
+
+        _this.errors.clearErrors();
+
+        if(e.which == 13){
+            if(query.length){
+                _this.getReceipts(wh_id, query);
+            }else{
+                _this.errors.add('Product name required!');
+                _this.errors.appendErrorsToDOM();
+                _this.errors.showErrorDOM();
+                _this.showTransactionTable();
+                _this.clearReceiptSearchResults();
+            }
+        }
+
+        if(e.which == 27){
+            $(this).val('');
+            $(this).blur();
+            _this.clearReceiptSearchResults();
+            _this.errors.hideErrorDOM();
+            _this.showReceiptsTable();
+        }
+    }
+
+    /**
+     * Get Receipts for search
+     * @param wh_id
+     * @param query
+     */
+    getReceipts(wh_id, query){
+        this.clearReceiptSearchResults();
 
         var _this = this;
         $.ajax({
@@ -171,259 +217,89 @@ var Receipt = function(){
             success : function(res){
                 if (res.length) {
                     _this.hideReceiptsTable();
-                    _this._appendTableHeader();
-                    _this._appendTableBody();
-                    _this._appendItemsToDOM(res);
-                    _this.attachDynamicHandlers();
+                    _this.appendReceiptSearchTableHeader();
+                    _this.appendReceiptSearchItemsToDOM(res);
+                    _this.attachReceiptSearchTableHandlers();
                 } else {
-                    _this.errors.push('No Receipts found with this id or name.');
-                    _this.appendErrorsOnDom();
-                    _this.showErrorDoM();
-                    _this._clearTransactions();
+                    _this.errors.add('No Receipts found with this id or name.');
+                    _this.errors.appendErrorsToDOM();
+                    _this.errors.showErrorDOM();
+                    _this.clearReceiptSearchResults();
                     _this.showReceiptsTable();
                 }
             }
         })
-    };
+    }
 
-    this.attachDynamicHandlers = function(){
-        console.log("Attaching Event Handlers");
+    /**
+     * Hide Receipts Table
+     */
+    hideReceiptsTable() {
+        $(".receipts-table").slideUp();
+    }
+
+    /**
+     * Show Receipts Table
+     */
+    showReceiptsTable() {
+        $(".receipts-table").slideDown();
+    }
+
+    /**
+     *  Bind/Unbind Receipt Search results table rows action handlers
+     */
+    attachReceiptSearchTableHandlers(){
         $(".receipt-details").unbind('click');
         $(".delete-receipt").unbind('click');
         $("#delete-receipt").unbind('click');
 
-        $(".receipt-details").on('click', {context : this} , this.showReceiptDetails);
+        $(".receipt-details").on('click', {context : this} , this.showInvoiceDetails);
         $(".delete-receipt").on('click', {context : this} , this.confirmReceiptDelete);
         $("#delete-receipt").on('click', {context : this} , this.deleteReceipt);
-    };
-
-    this.salesSearch = function(e){
-
-        e.preventDefault();
-        var _this = e.data.context,
-            query = $.trim($(this).val()).toLowerCase(),
-            wh_id = $.trim($(this).attr('data-warehouse'));
-
-        _this.clearErrors();
-
-        if(e.which == 13){
-            if(query.length){
-                _this.getReceipts(wh_id, query);
-            }else{
-                _this.errors.push('Product name required!');
-                _this.appendErrorsOnDom();
-                _this.showErrorDoM();
-                _this.showTransactionTable();
-                _this._clearTransactions();
-            }
-        }
-
-        if(e.which == 27){
-            $(this).val('');
-            $(this).blur();
-            _this._clearTransactions();
-            _this.hideErrorDoM();
-            _this.showReceiptsTable();
-        }
-    };
+    }
 
     /**
-     * Initialize Handlers
+     * Return Receipt sales total
+     * @param transactions
+     * @returns {number}
      */
-    this.init = function(){
-        $(".receipt-details").on('click', {context : this} , this.showReceiptDetails);
-        $(".delete-receipt").on('click', {context : this} , this.confirmReceiptDelete);
-        $("#delete-receipt").on('click', {context : this} , this.deleteReceipt);
-        $("#sales-search").on('keyup', {context : this}, this.salesSearch);
-        $('#receipt-dt-modal').on('hidden.bs.modal', {context :this }, this.clearTransactionModalBody);
-    };
-};
+    getRetailTotal(transactions){
+        var total = 0;
+        transactions.forEach(function (transaction) {
+            total += parseFloat(transaction.retail_total);
+        });
+        return total;
+    }
 
-var receipts = new Receipt();
-receipts.init();
+    /**
+     * Append Receipt search table headers
+     */
+    appendReceiptSearchTableHeader () {
+        var head_titles = ['ID', 'Name', 'Address', 'Phone No', 'Items', 'Retail', 'Cost', 'Profit', 'Date', 'Time'];
+        var $head = `<thead><tr><th>${head_titles.join('</th><th>')}</th></tr></thead>`;
+        $("#receipts-lists").append($head);
+    }
 
-Receipt.prototype.setTransactionModalHeader = function(id, name){
-    $("#receipt-dt-name").text('Buyer : ' + name);
-    $("#receipt-dt-id").text('Receipt id # ' + id);
-};
-
-/**
- * Append Receipt Transactions details modal header
- */
-Receipt.prototype.appendTableHeader = function () {
-    var $head = `<thead>
-                    <tr>
-                        <th>
-                            Name
-                        </th>
-
-                        <th>
-                            Quantity
-                        </th>
-                        <th>
-                            Unit Cost
-                        </th>
-                        <th>
-                            Total Retail
-                        </th>
-                        <th>
-                            Date
-                        </th>
-                        <th>
-                            Time
-                        </th>
-                    </tr>
-                </thead>`;
-    $("#receipt-dt-modal .modal-body .table").append($head);
-};
-
-/**
- * Append Receipt Transactions details modal body
- */
-Receipt.prototype.appendTableBody = function () {
-    var $body = `<tbody></tbody>`;
-    $("#receipt-dt-modal .modal-body .table").append($body);
-};
-
-/**
- * Append items to Transaction details modal body
- */
-Receipt.prototype.appendItemsToDOM = function (transactions) {
-    var retail_total = this.getRetailTotal(transactions);
-    $("#receipt-dt-total").html('<b>Retail  Total</b> : Rs.' + retail_total);
-    transactions.forEach(function (transaction) {
-        var $transaction = `<tr>
-                                <td>
-                                    ${transaction.item_name}
-                                </td>
-
-                                <td>
-                                    ${transaction.item_quantity}
-                                </td>
-                                <td>
-                                    ${transaction.cost_total / transaction.item_quantity}
-                                </td>
-                                <td>
-                                    ${transaction.retail_total}
-                                </td>
-                                <td>
-                                    ${moment(transaction.created_at).format('YYYY-MM-DD')}
-                                </td>
-                                <td>
-                                    ${moment(transaction.created_at).format('HH:mm:ss a')}
-                                </td>
-                            </tr>`;
-        $("#receipt-dt-modal .modal-body .table > tbody").append($transaction);
-    });
-};
-
-Receipt.prototype.getRetailTotal = function(transactions){
-    var total = 0;
-    transactions.forEach(function (transaction) {
-        total += parseFloat(transaction.retail_total);
-    });
-    return total;
-};
-
-
-
-/**
- * Receipts Dynamic Listings Header
- */
-Receipt.prototype._appendTableHeader = function () {
-    var $head = `<thead>
-                    <tr>
-                        <th>
-                            ID
-                        </th>
-
-                        <th>
-                            Name
-                        </th>
-                        <th>
-                            Address
-                        </th>
-                        <th>
-                            Phone No
-                        </th>
-                        <th>
-                            Items
-                        </th>
-                        <th>
-                            Retail
-                        </th>
-
-                        <th>
-                            Cost
-                        </th>
-
-                        <th>
-                            Profit
-                        </th>
-
-                        <th>
-                            Date
-                        </th>
-
-                        <th>
-                            Time
-                        </th>
-
-                        <th>
-
-                        </th>
-                    </tr>
-                </thead>`;
-    $("#receipts-lists").append($head);
-};
-
-/**
- * Receipts Dynamic Body
- */
-Receipt.prototype._appendTableBody = function () {
-    var $body = `<tbody></tbody>`;
-    $("#receipts-lists").append($body);
-};
-
-/**
- * Append Rows to Dynamic Receipts Listing Table Body
- * @param transactions
- */
-Receipt.prototype._appendItemsToDOM = function (receipts) {
-    receipts.forEach(function (receipt) {
-        console.log(receipt);
-        var $transaction = `<tr>
-                                <td>
-                                    ${receipt.id}
-                                </td>
-                                <td>
-                                    ${receipt.name}
-                                </td>
-                                <td>
-                                    ${receipt.address}
-                                </td>
-                                <td>
-                                    ${receipt.phone_no}
-                                </td>
-                                <td>
-                                    ${receipt.total_items}
-                                </td>
-                                <td>
-                                    ${receipt.total_retail}
-                                </td>
-                                <td>
-                                    ${receipt.cost_total}
-                                </td>
-                                <td>
-                                    ${receipt.profit}
-                                </td>
-                                <td>
-                                    ${moment(receipt.created_at).format('YYYY-MM-DD')}
-                                </td>
-                                <td>
-                                    ${moment(receipt.created_at).format('HH:mm:ss a')}
-                                </td>
-                                <td>
+    /**
+     * Append Receipt Search results to DOM
+     * @param receipts
+     */
+    appendReceiptSearchItemsToDOM(receipts) {
+        receipts.forEach(function (receipt) {
+            var $receipt = [
+                receipt.id,
+                receipt.name,
+                receipt.address,
+                receipt.phone_no,
+                receipt.total_items,
+                receipt.total_retail,
+                receipt.cost_total,
+                receipt.profit,
+                moment(receipt.created_at).format('YYYY-MM-DD'),
+                moment(receipt.created_at).format('HH:mm:ss a')
+            ];
+            var $item    = `<td>${$receipt.join('</td><td>')}</td>`;
+            var $actions = `<td>
                                 <div class="btn-group pull-right" role="group" aria-label="...">
                                     <a class="receipt-details" data-receipt-id="${receipt.id}" data-name="${receipt.name}" href="#">
                                         <button type="button" class="btn btn-default">
@@ -437,16 +313,33 @@ Receipt.prototype._appendItemsToDOM = function (receipts) {
                                         </a>
                                     </a>
                                 </div>
-                            </td>
-                            </tr>`;
-        $("#receipts-lists > tbody").append($transaction);
-    });
-};
+                            </td>`;
+            $("#receipts-lists").append(`<tbody><tr>${$item}${$actions}</tr></tbody>`);
+        });
+    }
 
-/**
- * Clear Dynamic Receipts Listings
- */
-Receipt.prototype._clearTransactions = function () {
-    $("#receipts-lists").html('');
-    $("#receipts-lists").parent('.table-responsive').find('.panel').remove();
-};
+    /**
+     * Clear Receipt search results table
+     */
+    clearReceiptSearchResults () {
+        $("#receipts-lists").html('');
+        $("#receipts-lists").parent('.table-responsive').find('.panel').remove();
+    }
+
+    constructor(){
+        this.errors = new Errors('#receipt_error');
+
+        // Receipt/Invoice Details
+        $(".receipt-details").on('click', {context : this} , this.showInvoiceDetails);
+        $('#receipt-dt-modal').on('hidden.bs.modal', {context :this }, this.clearInvoiceModalBody);
+
+        // Delete Receipt
+        $(".delete-receipt").on('click', {context : this} , this.confirmReceiptDelete);
+        $("#delete-receipt").on('click', {context : this} , this.deleteReceipt);
+
+        // Search Receipts
+        $("#sales-search").on('keyup', {context : this}, this.salesSearch);
+    }
+}
+
+var receipts = new Receipt();
