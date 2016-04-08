@@ -22,7 +22,10 @@
 <script type="text/javascript" src="/assets/lib/bootstrap/dist/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="/assets/lib/moment/moment.js"></script>
 
-
-<script type="text/javascript" src="/assets/js/app.js"></script>
+@if(env('APP_ENV') === "local")
+    <script type="text/javascript" src="/assets/js/app.js"></script>
+@else
+<script type="text/javascript" src="/assets/js/app.min.js"></script>
+@endif
 </body>
 </html>
