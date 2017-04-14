@@ -1,0 +1,47 @@
+.receipts {
+    .page-header {
+        button{
+            margin-right: 5px;
+        }
+    }
+
+    #receipt_error{
+        display:none;
+    }
+
+    .table {
+        font-size: 16px;
+        font-weight: 400;
+
+        th {
+            font-weight: bold;
+        }
+
+        .btn-group {
+
+            a {
+                text-decoration: none;
+            }
+        }
+
+        .unpaid{
+            color:#C1292E;
+        }
+    }
+
+    #receipt-dt-total{
+        font-size: 18px;
+    }
+
+    .sales-search{
+        height: 50px;
+        input{
+            width : 300px;
+        }
+    }
+
+    .links{
+        text-align:center;
+    }
+
+}

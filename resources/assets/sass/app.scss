@@ -1,0 +1,14 @@
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
+
+* {
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+@import "dashboard";
+@import "products";
+@import "add_product";
+@import "edit_product";
+@import "checkout";
+@import "profit";
+@import "receipts";
+@import "config";

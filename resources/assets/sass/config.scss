@@ -1,0 +1,14 @@
+.config{
+  position:relative;
+  height: auto;
+  display:block;
+  clear:both;
+  padding: 0px;
+
+  min-width: 300px;
+  max-width: 500px;
+
+  #p_error {
+    display: none;
+  }
+}

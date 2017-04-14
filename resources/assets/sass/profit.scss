@@ -1,0 +1,51 @@
+.transactions{
+    .page-header {
+        button{
+            margin-right: 5px;
+        }
+    }
+
+    table{
+        thead{
+            th{
+                font-weight: bold;
+            }
+        }
+    }
+
+    ul.pagination{
+        margin : 0px auto;
+    }
+
+    .date{
+        display:block;
+        height: auto;
+        overflow:auto;
+        form{
+            label{
+                padding: 15px;
+            }
+        }
+
+        #datepicker-from,
+        #datepicker-to{
+            cursor:pointer;
+        }
+    }
+
+    #transaction-lists{
+        margin-top: 30px;
+    }
+
+    #transaction_error{
+        display:none;
+        margin-top: 10px;
+    }
+
+    .table-responsive{
+        margin-top: 10px;
+        .panel{
+            padding-bottom: 0px;
+        }
+    }
+}

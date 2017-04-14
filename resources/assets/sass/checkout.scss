@@ -1,0 +1,71 @@
+.checkout{
+
+    .page-header {
+        button{
+            margin-right: 5px;
+        }
+    }
+
+    #c_p_error{
+        display: none;
+    }
+
+    #checkout-form{
+        label{
+            width: 100px;
+        }
+
+        .form-group{
+            margin: 5px 0px;
+            input{
+                width : 100%;
+            }
+        }
+
+        .form-group:last-child{
+            padding-top: 25px;
+
+            .btn {
+                width : 100%;
+            }
+        }
+
+        /*@media (min-width: 1200px){
+            .form-group{
+                width : 20%;
+            }
+        }*/
+    }
+
+    #checkout-list{
+        .glyphicon{
+            cursor: pointer;
+        }
+    }
+
+    .checkout-actions{
+        display: none;
+        table{
+            tr{
+                td:nth-child(1),
+                td:nth-child(2),
+                td:nth-child(3),
+                td:nth-child(4)
+                {
+                    padding: 20px;
+                }
+
+                td:nth-child(4){
+                    .checkout-paid{
+                        margin-right : 20px;
+                    }
+                }
+
+                #go-checkout{
+                    width: 100%;
+                    margin-top: 5px;
+                }
+            }
+        }
+    }
+}

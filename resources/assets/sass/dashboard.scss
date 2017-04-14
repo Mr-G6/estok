@@ -1,0 +1,47 @@
+.dashboard{
+
+    .panel{
+        margin-right: 5px;
+        height: 340px;
+    }
+    .row{
+        margin: 0px auto;
+        .panel{
+            height:auto;
+            overflow-x:auto;
+            .panel-body{
+                .btn{
+                    width: 100%;
+                }
+            }
+        }
+
+        table{
+            margin-top: 5px;
+        }
+    }
+
+    a{
+        text-decoration:none;
+        color:grey;
+    }
+
+    .glyphicon-cog{
+        cursor:pointer;
+        display: none;
+        font-size: 20px;
+        padding: 5px;
+    }
+
+    .glyphicon-cog:hover{
+        color:black;
+    }
+
+    .row:hover .glyphicon-cog{
+        display:block;
+    }
+
+    button {
+        margin-top: 5px;
+    }
+}
