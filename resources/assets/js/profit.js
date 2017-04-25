@@ -194,7 +194,6 @@ class Transactions{
                 _this.errors.add('Product name required!');
                 _this.errors.appendErrorsToDOM();
                 _this.errors.showErrorDOM();
-                _this.showTransactionTable();
                 _this.clearProductSearchTable();
             }
         }
@@ -273,7 +272,7 @@ class Transactions{
         transactions.forEach(function (transaction) {
             var $transaction = [
                 transaction.id,
-                transaction.product.name,
+                transaction.product_name,
                 transaction.quantity,
                 transaction.cost_total,
                 transaction.retail_total,

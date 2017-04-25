@@ -1,3 +1,6 @@
+/**
+ * Delete inventory
+ */
 $(".delete-inventory").on('click', function(e){
     e.preventDefault();
     var id = $(this).attr('data-inventory-id');

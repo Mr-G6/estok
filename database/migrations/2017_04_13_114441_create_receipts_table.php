@@ -20,6 +20,7 @@ class CreateReceiptsTable extends Migration
             $table->string('address');
             $table->string('phone_no');
             $table->boolean('paid');
+            $table->double('unpaid');
             $table->foreign('inventory_id')->references('id')->on('inventory')->onDelete('cascade');
 
             $table->timestamps();

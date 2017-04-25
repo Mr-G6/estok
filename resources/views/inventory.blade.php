@@ -80,7 +80,11 @@
 
                             <td>
                                 <div class="btn-group pull-right" role="group" aria-label="...">
-                                    <a class="product-details" data-product-id="{{$product->id}}" data-inventory-id="{{$product->inventory_id}}" href="#">
+                                    <a class="product-details"
+                                       data-product-id="{{$product->id}}"
+                                       data-inventory-id="{{$product->inventory_id}}"
+                                       data-product-name="{{$product->name}}"
+                                       href="#">
                                         <button type="button" class="btn btn-default">
                                             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Details
                                         </button>

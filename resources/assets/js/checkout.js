@@ -592,7 +592,7 @@ class Checkout {
 
         this.errors = [];
 
-        this.errors = new Errors('#c_p_error');
+        this.errors = new Errors('#error');
 
         var inventory_id = this.getWareHouseId();
         this.getNames(inventory_id, this);

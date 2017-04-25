@@ -32,7 +32,10 @@ Route::group(['middleware'  =>  'auth'], function(){
     Route::get('/inventory/{id}/profit/byDate', 'ProfitController@getTransactionsByDate');
 
     Route::get('/inventory/{id}/sales', 'SalesController@index');
+    Route::get('/inventory/sales/receipt', 'SalesController@getReceiptDetails');
     Route::post('/inventory/clear/sales', 'SalesController@clearDues');
+    Route::post('/inventory/clear/sales/partial', 'SalesController@clearPartialDues');
+
     Route::get('/inventory/sales/byReceiptId', 'SalesController@getSales');
 
     Route::get('/inventory/sales/byReceiptIdOrName', 'SalesController@getSalesByIdOrName');

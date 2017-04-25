@@ -23,7 +23,7 @@
                    required>
         </div>
 
-        <div class="alert alert-danger" id="receipt_error" role="alert"></div>
+        <div class="alert alert-danger" id="error" role="alert"></div>
 
         @if(count($receipts))
             <div class="table-responsive receipts-table">
@@ -76,7 +76,7 @@
                                 {{$receipt->name}}
                             </td>
                             <td>
-                                {{$receipt->address}}
+                                {{substr($receipt->address, 0 , 20)}}
                             </td>
                             <td>
                                 {{$receipt->phone_no}}
@@ -132,63 +132,12 @@
                 </table>
             </div>
 
-            <div class="table-responsive">
-                <table id="receipts-lists" class="table table-striped">
-
-                </table>
-            </div>
-
         @else
             <div class="alert alert-warning" role="alert">No sales record for this inventory : {{$inventory->name}}.</div>
         @endif
 
         <div class="links">
             {{$receipts->links()}}
-        </div>
-    </div>
-
-    <div class="modal fade" id="receipt-dt-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <div class="header-data">
-                        <h3 class="modal-title" id="receipt-dt-title">Sales Invoice</h3>
-                        <h4 id="receipt-dt-id">Receipt id # 1</h4>
-                        <h4 id="receipt-dt-name">Buyer : Waleed Ahmad</h4>
-                    </div>
-                </div>
-                <div class="modal-body">
-                    <table class="table table-bordered">
-
-                    </table>
-                </div>
-                <div class="modal-footer">
-                    <span id="receipt-dt-total" class="pull-left" style="font-size: 16px;"></span>
-                    <a target="_blank" href="" id="print-receipt">
-                        <button type="button" class="btn btn-default">Print</button>
-                    </a>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="receipt-delete-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="receipt-dt-title">Warning!</h4>
-                </div>
-                <div class="modal-body">
-                    <p>Deleting this Receipt will also delete all transaction records.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger" id="delete-receipt" data-dismiss="modal">Delete</button>
-                </div>
-            </div>
         </div>
     </div>
 @stop

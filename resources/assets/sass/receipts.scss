@@ -5,7 +5,7 @@
         }
     }
 
-    #receipt_error{
+    #error{
         display:none;
     }
 
@@ -44,4 +44,18 @@
         text-align:center;
     }
 
+    #clear-dues{
+
+        .modal-body{
+            h3{
+                margin : 5px 0px;
+            }
+            display: block;
+            height: 320px;
+
+            .btn, input{
+                margin : 10px 0px;
+            }
+        }
+    }
 }

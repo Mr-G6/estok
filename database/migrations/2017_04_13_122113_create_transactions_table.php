@@ -17,7 +17,7 @@ class CreateTransactionsTable extends Migration
             $table->increments('id');
             $table->integer('receipt_id')->unsigned();
             $table->integer('inventory_id')->unsigned();
-            $table->integer('product_id')->unsigned();
+            $table->string('product_name');
             $table->integer('quantity');
             $table->double('retail_price');
             $table->double('unit_price');
@@ -25,7 +25,6 @@ class CreateTransactionsTable extends Migration
             $table->double('cost_total');
             $table->foreign('receipt_id')->references('id')->on('receipts')->onDelete('cascade');
             $table->foreign('inventory_id')->references('id')->on('inventory')->onDelete('cascade');
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->timestamps();
         });
     }

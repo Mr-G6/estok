@@ -69,7 +69,7 @@
                 </div>
             </div>
         </div>
-        <div id="c_p_error" class="alert alert-danger" role="alert"></div>
+        <div id="error" class="alert alert-danger" role="alert"></div>
 
         <div class="table-responsive">
             <table id="checkout-list" class="table table-bordered">

@@ -53,7 +53,7 @@
             </div>
 
             <div class="form-group">
-                <div class="alert alert-danger" id="p_error" role="alert"></div>
+                <div class="alert alert-danger" id="error" role="alert"></div>
             </div>
 
 

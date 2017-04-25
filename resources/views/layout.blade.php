@@ -23,6 +23,8 @@
     <script type="text/javascript" src="/assets/lib/bootstrap/dist/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/assets/lib/moment/moment.js"></script>
     <script type="text/javascript" src="/assets/lib/bootbox.js/bootbox.js"></script>
+    <script type="text/javascript" src="/assets/lib/mustache.js/mustache.js"></script>
+
     @if(env('APP_ENV') === "local")
         <script type="text/javascript" src="/assets/js/app.js"></script>
     @else

@@ -16,6 +16,12 @@
     </button>
 </a>
 
+<a class="pull-right" href="/inventory/{{$inventory->id}}/products">
+    <button type="button" class="btn btn-default">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Inventory
+    </button>
+</a>
+
 <a class="pull-right" href="/inventory/{{$inventory->id}}/products/add">
     <button type="button" class="btn btn-default">
         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Products

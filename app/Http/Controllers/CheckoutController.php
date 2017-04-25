@@ -67,15 +67,16 @@ class CheckoutController extends Controller
         $address = $request->address;
         $phone = $request->phone;
         $paid = $request->paid;
+        $unpaid = $this->getUnpaidAmount($request->paid, $items);
         $receipt_id = ($this->getMaxReceiptCount()) ? $this->getMaxReceiptCount() + 1 : 1;
-        $this->createReceipt($receipt_id, $inventory_id, $buyer, $address, $phone, $paid);
+        $this->createReceipt($receipt_id, $inventory_id, $buyer, $address, $phone, $paid, $unpaid);
 
         foreach ($items as $item) {
             $this->decrementProductCount($inventory_id, $item->name, $item->quantity);
             $transaction = new Transaction;
             $transaction->inventory_id = $inventory_id;
             $transaction->receipt_id = $receipt_id;
-            $transaction->product_id = $item->id;
+            $transaction->product_name = $item->name;
             $transaction->quantity = $item->quantity;
             $transaction->retail_price = $item->r_price;
             $transaction->unit_price = $item->unit_price;
@@ -86,7 +87,19 @@ class CheckoutController extends Controller
         return response()->json($this->getMaxReceiptCount());
     }
 
-    private function createReceipt($receipt_id, $inventory_id, $buyer, $address, $phone, $paid)
+    public function getUnpaidAmount($paid, $items)
+    {
+        if ($paid) {
+            return 0;
+        }
+        $total = 0;
+        foreach ($items as $item) {
+            $total += $item->quantity * $item->r_price;
+        }
+        return $total;
+    }
+
+    private function createReceipt($receipt_id, $inventory_id, $buyer, $address, $phone, $paid, $unpaid)
     {
         $receipt = new Receipt;
         $receipt->id = $receipt_id;
@@ -95,6 +108,7 @@ class CheckoutController extends Controller
         $receipt->address = $address;
         $receipt->phone_no = $phone;
         $receipt->paid = $paid;
+        $receipt->unpaid = $unpaid;
 
         if ($receipt->save()) {
             return true;
@@ -102,7 +116,8 @@ class CheckoutController extends Controller
         return false;
     }
 
-    private function decrementProductCount($inventory_id, $item_name, $item_quantity){
+    private function decrementProductCount($inventory_id, $item_name, $item_quantity)
+    {
         Products::where('inventory_id', '=', $inventory_id)->where('name', '=', $item_name)->decrement('quantity', $item_quantity);
     }
 

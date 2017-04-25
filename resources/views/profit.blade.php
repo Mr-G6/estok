@@ -92,7 +92,7 @@
                                 {{$transaction->id}}
                             </td>
                             <td>
-                                {{$transaction->product->name}}
+                                {{$transaction->product_name}}
                             </td>
                             <td>
                                 {{$transaction->quantity}}
