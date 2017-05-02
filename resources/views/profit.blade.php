@@ -1,42 +1,20 @@
 @extends('layout')
 
 @section('title')
-    <title>{{$warehouse->name}} - UrbanWare</title>
+    <title>{{$inventory->name}} - {{\App\Config::where('name','=', 'app_name')->first()->value}}</title>
 @stop
 
-@section('body')
-    <div class="transactions" data-wh-id="{{$warehouse->id}}">
+@section('content')
+    <div class="transactions" data-wh-id="{{$inventory->id}}">
         <div class="page-header">
 
 
-            <a class="pull-right" href="/warehouse/{{$warehouse->id}}/sales">
-                <button type="button" class="btn btn-default">
-                    <i class="fa fa-credit-card"></i></span> Sales
-                </button>
-            </a>
-
-            <a class="pull-right" href="/warehouse/checkout/{{$warehouse->id}}">
-                <button type="button" class="btn btn-default">
-                    <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Checkout
-                </button>
-            </a>
-
-            <a class="pull-right" href="/warehouse/{{$warehouse->id}}/products">
-                <button type="button" class="btn btn-default">
-                    <span class="glyphicon glyphicon-list" aria-hidden="true"></span> Inventory
-                </button>
-            </a>
-
-            <a class="pull-right" href="/warehouse/{{$warehouse->id}}/products/add">
-                <button type="button" class="btn btn-default">
-                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Products
-                </button>
-            </a>
+            @include('inventory.header_nav')
 
 
             <h3>
                 Profit
-                <small>{{$warehouse->name}}</small>
+                <small>{{$inventory->name}}</small>
             </h3>
         </div>
 
@@ -114,10 +92,10 @@
                                 {{$transaction->id}}
                             </td>
                             <td>
-                                {{$transaction->item_name}}
+                                {{$transaction->product_name}}
                             </td>
                             <td>
-                                {{$transaction->item_quantity}}
+                                {{$transaction->quantity}}
                             </td>
                             <td>
                                 Rs.{{$transaction->cost_total}}
@@ -143,7 +121,7 @@
 
             <center>{{$transactions->links()}}</center>
         @else
-            <div class="alert alert-warning" role="alert">No Transactions Available. {{$warehouse->name}}.</div>
+            <div class="alert alert-warning" role="alert">No transactions available for this inventory :  {{$inventory->name}}.</div>
         @endif
 
         <div class="table-responsive">

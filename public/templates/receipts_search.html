@@ -1,0 +1,52 @@
+
+<div class="table-responsive receipt-search-results">
+    <table id="receipts-lists" class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Phone No</th>
+            <th>Items</th>
+            <th>Retail</th>
+            <th>Cost</th>
+            <th>Profit</th>
+            <th>Date</th>
+            <th>Time</th>
+        </tr>
+
+        </thead>
+
+        <tbody>
+            {{#receipts}}
+            <tr>
+                <td>{{id}}</td>
+                <td>{{name}}</td>
+                <td>{{address}}</td>
+                <td>{{phone_no}}</td>
+                <td>{{total_items}}</td>
+                <td>{{total_retail}}</td>
+                <td>{{cost_total}}</td>
+                <td>{{profit}}</td>
+                <td>{{date}}</td>
+                <td>{{time}}</td>
+                <td>
+                    <div class="btn-group pull-right" role="group" aria-label="...">
+                        <a class="receipt-details" data-receipt-id="{{id}}" data-name="{{name}}" href="#">
+                            <button type="button" class="btn btn-default">
+                                <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Details
+                            </button>
+
+                            <a class="delete-receipt" data-receipt-id="{{id}}" href="#">
+                                <button type="button" class="btn btn-default">
+                                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete
+                                </button>
+                            </a>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {{/receipts}}
+        </tbody>
+    </table>
+</div>

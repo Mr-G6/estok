@@ -1,35 +1,46 @@
 <?php namespace App\Http\Controllers;
 
-use App\Models\Products;
-use App\Models\Receipt;
-use App\Models\Transaction;
-use App\Models\WareHouse;
+use App\Inventory;
+use App\Products;
+use App\Receipt;
+use App\Transaction;
+use App\WareHouse;
 use Illuminate\Http\Request;
 
 class CheckoutController extends Controller
 {
 
+    /**
+     * Inventory Checkout
+     * @param $id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function index($id)
     {
-        $warehouse = WareHouse::where('id', '=', $id)->get();
-        if (count($warehouse)) {
-            $warehouse = $warehouse->first();
-            return view('checkout')->with('warehouse', $warehouse);
+        $inventory = Inventory::where('id', '=', $id)->get();
+        if (count($inventory)) {
+            $inventory = $inventory->first();
+            return view('checkout')->with('inventory', $inventory);
         }
         return redirect('/');
     }
 
+    /**
+     * Get available product names for autocomplete
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getProducts($id)
     {
-        $products = Products::where('wh_id', '=', $id);
-        return response()->json($products->lists('name'));
+        $products = Products::where('inventory_id', '=', $id);
+        return response()->json($products->pluck('name'));
     }
 
     public function getProductDetails(Request $request)
     {
-        $wh_id = $request->input('wh_id');
-        $name = $request->input("name");
-        $product = Products::where('wh_id', '=', $wh_id)
+        $inventory_id = $request->inventory_id;
+        $name = $request->name;
+        $product = Products::where('inventory_id', '=', $inventory_id)
                             ->where('name', '=', $name)
                             ->get()
                             ->first();
@@ -38,10 +49,10 @@ class CheckoutController extends Controller
 
     public function validateQuantity(Request $request)
     {
-        $wh_id = $request->input('wh_id');
-        $name = $request->input('name');
+        $inventory_id = $request->inventory_id;
+        $name = $request->name;
 
-        $quantity = Products::where('wh_id', '=', $wh_id)
+        $quantity = Products::where('inventory_id', '=', $inventory_id)
                             ->where('name', '=', $name)
                             ->get()
                             ->first()->quantity;
@@ -50,21 +61,23 @@ class CheckoutController extends Controller
 
     public function checkout(Request $request)
     {
-        $wh_id = $request->input('wh_id');
-        $items = json_decode($request->input('items'));
-        $buyer = $request->input('buyer');
-        $address = $request->input('address');
-        $phone = $request->input('phone');
+        $inventory_id = $request->inventory_id;
+        $items = json_decode($request->items);
+        $buyer = $request->buyer;
+        $address = $request->address;
+        $phone = $request->phone;
+        $paid = $request->paid;
+        $unpaid = $this->getUnpaidAmount($request->paid, $items);
         $receipt_id = ($this->getMaxReceiptCount()) ? $this->getMaxReceiptCount() + 1 : 1;
-        $this->createReceipt($receipt_id, $wh_id, $buyer, $address, $phone);
+        $this->createReceipt($receipt_id, $inventory_id, $buyer, $address, $phone, $paid, $unpaid);
 
         foreach ($items as $item) {
-            $this->decrementProductCount($wh_id, $item->name, $item->quantity);
+            $this->decrementProductCount($inventory_id, $item->name, $item->quantity);
             $transaction = new Transaction;
-            $transaction->wh_id = $wh_id;
+            $transaction->inventory_id = $inventory_id;
             $transaction->receipt_id = $receipt_id;
-            $transaction->item_name = $item->name;
-            $transaction->item_quantity = $item->quantity;
+            $transaction->product_name = $item->name;
+            $transaction->quantity = $item->quantity;
             $transaction->retail_price = $item->r_price;
             $transaction->unit_price = $item->unit_price;
             $transaction->retail_total = $item->quantity * $item->r_price;
@@ -74,14 +87,28 @@ class CheckoutController extends Controller
         return response()->json($this->getMaxReceiptCount());
     }
 
-    private function createReceipt($receipt_id, $wh_id, $buyer, $address, $phone)
+    public function getUnpaidAmount($paid, $items)
+    {
+        if ($paid) {
+            return 0;
+        }
+        $total = 0;
+        foreach ($items as $item) {
+            $total += $item->quantity * $item->r_price;
+        }
+        return $total;
+    }
+
+    private function createReceipt($receipt_id, $inventory_id, $buyer, $address, $phone, $paid, $unpaid)
     {
         $receipt = new Receipt;
         $receipt->id = $receipt_id;
-        $receipt->wh_id = $wh_id;
+        $receipt->inventory_id = $inventory_id;
         $receipt->name = $buyer;
         $receipt->address = $address;
         $receipt->phone_no = $phone;
+        $receipt->paid = $paid;
+        $receipt->unpaid = $unpaid;
 
         if ($receipt->save()) {
             return true;
@@ -89,8 +116,9 @@ class CheckoutController extends Controller
         return false;
     }
 
-    private function decrementProductCount($wh_id, $item_name, $item_quantity){
-        Products::where('wh_id', '=', $wh_id)->where('name', '=', $item_name)->decrement('quantity', $item_quantity);
+    private function decrementProductCount($inventory_id, $item_name, $item_quantity)
+    {
+        Products::where('inventory_id', '=', $inventory_id)->where('name', '=', $item_name)->decrement('quantity', $item_quantity);
     }
 
     public function getMaxReceiptCount()

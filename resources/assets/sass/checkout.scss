@@ -6,7 +6,7 @@
         }
     }
 
-    #c_p_error{
+    #error{
         display: none;
     }
 
@@ -30,11 +30,11 @@
             }
         }
 
-        @media (min-width: 1200px){
+        /*@media (min-width: 1200px){
             .form-group{
                 width : 20%;
             }
-        }
+        }*/
     }
 
     #checkout-list{
@@ -49,9 +49,16 @@
             tr{
                 td:nth-child(1),
                 td:nth-child(2),
-                td:nth-child(3)
+                td:nth-child(3),
+                td:nth-child(4)
                 {
                     padding: 20px;
+                }
+
+                td:nth-child(4){
+                    .checkout-paid{
+                        margin-right : 20px;
+                    }
                 }
 
                 #go-checkout{

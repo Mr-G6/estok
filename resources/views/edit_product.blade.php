@@ -4,8 +4,14 @@
     <title>Edit Product - UrbanWare</title>
 @stop
 
-@section('body')
+@section('content')
     <div class="edit-product">
+
+        <div class="page-header">
+            <h3>Edit Product - {{$product->name}}
+            </h3>
+        </div>
+
         <div class="wrapper">
             <form id="edit-product-form" method="POST" action="/warehouse/product/add">
                 <div class="form-group">
@@ -17,6 +23,17 @@
                            value="{{$product->name}}"
                            data-old-name="{{$product->name}}"
                            placeholder="Product Name"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="retail_price">Retail Price </label>
+                    <input type="text"
+                           class="form-control"
+                           name="retail_price"
+                           id="retail_price"
+                           placeholder="Product Retail Price"
+                           value="{{$product->retail_price}}"
                            required>
                 </div>
 
@@ -43,7 +60,7 @@
                 </div>
 
                 <div class="form-group">
-                    <div class="alert alert-danger" id="p_error" role="alert"></div>
+                    <div class="alert alert-danger" id="error" role="alert"></div>
                 </div>
 
                 <input type="hidden"
@@ -66,7 +83,7 @@
                 <button type="submit" class="btn btn-default pull-right">
                     <span class="glyphicon glyphicon-save" aria-hidden="true"></span> Update Product
                 </button>
-                <a class="btn btn-default pull-right" href="/warehouse/{{$warehouse->id}}/products" role="button">
+                <a class="btn btn-default pull-right" href="/inventory/{{$warehouse->id}}/products" role="button">
                     <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Cancel
                 </a>
 

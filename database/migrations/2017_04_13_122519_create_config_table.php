@@ -1,9 +1,10 @@
 <?php
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddWarehouseTable extends Migration
+class CreateConfigTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,11 +13,10 @@ class AddWarehouseTable extends Migration
      */
     public function up()
     {
-        Schema::create('warehouses', function (Blueprint $table) {
-            $table->bigIncrements('id');
+        Schema::create('config', function (Blueprint $table) {
+            $table->increments('id');
             $table->string('name');
-            $table->string('location');
-            $table->string('owner');
+            $table->string('value');
             $table->timestamps();
         });
     }
@@ -28,8 +28,6 @@ class AddWarehouseTable extends Migration
      */
     public function down()
     {
-        Schema::table('warehouses', function (Blueprint $table) {
-            $table->drop();
-        });
+        Schema::dropIfExists('config');
     }
 }

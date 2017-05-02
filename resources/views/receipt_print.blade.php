@@ -64,13 +64,13 @@
                 @foreach($transactions as $transaction)
                     <tr>
                         <td>
-                            {{$transaction->item_name}}
+                            {{$transaction->product_name}}
                         </td>
                         <td>
-                            {{$transaction->item_quantity}}
+                            {{$transaction->quantity}}
                         </td>
                         <td>
-                            {{$transaction->cost_total / $transaction->item_quantity}}
+                            {{$transaction->cost_total / $transaction->quantity}}
                         </td>
                         <td>
                             {{$transaction->retail_total}}
@@ -89,7 +89,7 @@
             <tr>
                 <div class="well">
                     <h4>
-                        Total : {{\App\Models\Transaction::where('receipt_id', '=', $receipt->id)->sum('retail_total')}}
+                        Total : {{\App\Transaction::where('receipt_id', '=', $receipt->id)->sum('retail_total')}}
                     </h4>
 
                     <button class="btn btn-default pull-right" id="print-receipt">

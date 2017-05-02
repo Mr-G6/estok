@@ -2,8 +2,8 @@
 
 
 
-use App\Models\Receipt;
-use App\Models\Transaction;
+use App\Receipt;
+use App\Transaction;
 
 class PrinterController extends Controller{
 

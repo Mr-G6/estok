@@ -1,124 +1,58 @@
 @extends('layout')
 
 @section('title')
-    <title>UrbanWare</title>
+    <title>{{\App\Config::where('name','=', 'app_name')->first()->value}}</title>
 @stop
 
-@section('body')
+@section('content')
     <div class="dashboard">
         <div class="page-header">
-            <h3>Available Warehouses
+            <h3>Available Inventories
                 <small></small>
             </h3>
         </div>
 
-        @foreach($warehouses as $warehouse)
+        @foreach($inventories as $inventory)
             <div class="row col-xs-12 col-sm-6 col-md-6 col-lg-6">
                 <div class="panel panel-default">
                     <div class="panel-heading">
 
-                        <a class="pull-right" href="/warehouse/edit/{{$warehouse->id}}">
+                        <a class="pull-right" href="/inventory/edit/{{$inventory->id}}">
                             <span class="glyphicon glyphicon glyphicon-cog" aria-hidden="true"></span>
                         </a>
 
-                        <h4>{{$warehouse->name}}</h4>
+                        <h4>{{$inventory->name}}</h4>
                     </div>
                     <div class="panel-body">
 
-                        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
-                            <a class="center-block" href="/warehouse/{{$warehouse->id}}/sales">
+                        <div>
+                            <a class="center-block" href="/inventory/{{$inventory->id}}/sales">
                                 <button type="button" class="btn btn-default">
                                     <i class="fa fa-credit-card"></i> Sales
                                 </button>
                             </a>
-                            <a class="center-block" href="/warehouse/{{$warehouse->id}}/products">
+                            <a class="center-block" href="/inventory/{{$inventory->id}}/products">
                                 <button type="button" class="btn btn-default">
-                                    <span class="glyphicon glyphicon-list" aria-hidden="true"></span> Inventory
+                                    <span class="glyphicon glyphicon-list" aria-hidden="true"></span> Inventory ({{$inventory->products->count()}} items)
                                 </button>
                             </a>
-                            <a class="center-block" href="/warehouse/{{$warehouse->id}}/products/add">
+                            <a class="center-block" href="/inventory/{{$inventory->id}}/products/add">
                                 <button type="button" class="btn btn-default">
                                     <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Products
                                 </button>
                             </a>
 
-                            <a class="center-block" href="/warehouse/{{$warehouse->id}}/profit">
+                            <a class="center-block" href="/inventory/{{$inventory->id}}/profit">
                                 <button type="button" class="btn btn-default">
-                                    <i class="fa fa-line-chart"></i> Profit
+                                    <i class="fa fa-line-chart"></i> Profit Calculator
                                 </button>
                             </a>
 
-                            <a class="center-block" href="/warehouse/checkout/{{$warehouse->id}}">
+                            <a class="center-block" href="/inventory/checkout/{{$inventory->id}}">
                                 <button type="button" class="btn btn-default">
                                     <i class="fa fa-cart-plus"></i> Checkout
                                 </button>
                             </a>
-                        </div>
-
-                        <div class="col-xs-12 col-sm-6 col-md-8 col-lg-8">
-                            <table class="table table-bordered">
-                                <tr>
-                                    <td>
-                                        Location
-                                    </td>
-
-                                    <td>
-                                        @if($warehouse->location)
-                                            {{$warehouse->location}}
-                                        @else
-                                            N/A
-                                        @endif
-
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td>
-                                        Owner
-                                    </td>
-
-                                    <td>
-                                        @if($warehouse->owner)
-                                            {{$warehouse->owner}}
-                                        @else
-                                            N/A
-                                        @endif
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td>
-                                        Products
-                                    </td>
-
-                                    <td>
-                                        @if($warehouse->products_count)
-                                            @if($warehouse->products_count == 1)
-                                                {{$warehouse->products_count}} Product
-                                            @else
-                                                {{$warehouse->products_count}} Products in Stock
-                                            @endif
-
-                                        @else
-                                            No Stock Available
-                                        @endif
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td>
-                                        Updated at
-                                    </td>
-
-                                    <td>
-                                        @if(isset($warehouse->updated))
-                                            {{$warehouse->updated}}
-                                        @else
-                                            N/A
-                                        @endif
-                                    </td>
-                                </tr>
-                            </table>
                         </div>
 
                     </div>

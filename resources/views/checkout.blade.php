@@ -1,47 +1,24 @@
 @extends('layout')
 
 @section('title')
-    <title>Checkout - UrbanWare</title>
+    <title>Checkout - {{\App\Config::where('name','=', 'app_name')->first()->value}}</title>
 @stop
 
-@section('body')
-    <div class="checkout" data-wh-id="{{$warehouse->id}}" data-token="{{csrf_token()}}">
+@section('content')
+    <div class="checkout" data-wh-id="{{$inventory->id}}" data-token="{{csrf_token()}}">
         <div class="page-header">
 
-            <a class="pull-right" href="/warehouse/{{$warehouse->id}}/sales">
-                <button type="button" class="btn btn-default">
-                    <i class="fa fa-credit-card"></i></span> Sales
-                </button>
-            </a>
-
-
-            <a class="pull-right" href="/warehouse/{{$warehouse->id}}/profit">
-                <button type="button" class="btn btn-default">
-                    <span class="glyphicon glyphicon-stats" aria-hidden="true"></span> Profit
-                </button>
-            </a>
-
-            <a class="pull-right" href="/warehouse/{{$warehouse->id}}/products">
-                <button type="button" class="btn btn-default">
-                    <span class="glyphicon glyphicon-list" aria-hidden="true"></span> Inventory
-                </button>
-            </a>
-
-            <a class="pull-right" href="/warehouse/{{$warehouse->id}}/products/add">
-                <button type="button" class="btn btn-default">
-                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Products
-                </button>
-            </a>
+            @include('inventory.header_nav')
 
             <h3> Checkout
-                <small>{{$warehouse->name}}</small>
+                <small>{{$inventory->name}}</small>
             </h3>
         </div>
 
         <div class="panel panel-default">
             <div class="panel-body">
                 <div id="checkout-form">
-                    <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-3">
+                    <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-2">
                         <label for="c_p_name"> Name </label>
                         <input type="text"
                                class="form-control"
@@ -50,7 +27,7 @@
                                required>
                     </div>
 
-                    <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-3">
+                    <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-2">
                         <label for="c_p_quantity"> Quantity </label>
                         <input type="text"
                                class="form-control"
@@ -59,16 +36,25 @@
                                required>
                     </div>
 
-                    <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-3">
+                    <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-2">
+                        <label for="c_p_quantity"> Discount </label>
+                        <input type="text"
+                               class="form-control"
+                               id="c_p_discount"
+                               placeholder="Discount"
+                               required>
+                    </div>
+
+                    <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-2">
                         <label for="c_p_r_price"> Retail Price </label>
                         <input type="text"
                                class="form-control"
                                id="c_p_r_price"
-                               placeholder="Retail Price"
+                               placeholder="Retail Price" readonly
                                required>
                     </div>
 
-                    <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-3">
+                    <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-2">
                         <label for="c_p_unit_price"> Unit Price </label>
                         <input type="text"
                                class="form-control"
@@ -77,13 +63,13 @@
                                required>
                     </div>
 
-                    <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-3">
+                    <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-2">
                         <button type="submit" id="product-add" class="btn btn-default">Add Product</button>
                     </div>
                 </div>
             </div>
         </div>
-        <div id="c_p_error" class="alert alert-danger" role="alert"></div>
+        <div id="error" class="alert alert-danger" role="alert"></div>
 
         <div class="table-responsive">
             <table id="checkout-list" class="table table-bordered">
@@ -103,12 +89,15 @@
                     <th>
                         Total Cost
                     </th>
-                    <td>
+                    <th>
                         Total Retail
-                    </td>
-                    <td>
+                    </th>
+                    <th>
+                        Discount
+                    </th>
+                    <th>
                         Actions
-                    </td>
+                    </th>
                 </tr>
             </table>
         </div>
@@ -124,6 +113,9 @@
                         </td>
                         <td>
                             <b>Total Retail :</b> <span class="retail-total"></span>
+                        </td>
+                        <td>
+                            <b>Pay Later :</b> <input type="checkbox" id="pay-later" class="pull-right">
                         </td>
                         <td>
                             <button id="go-checkout" class="btn btn-default center-block">Confirm Checkout</button>

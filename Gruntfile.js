@@ -7,10 +7,7 @@ module.exports = function(grunt) {
             dist: {
                 src: [
                     'resources/assets/js/errors.js',
-                    'resources/assets/js/checkout.js',
-                    'resources/assets/js/product.js',
-                    'resources/assets/js/profit.js',
-                    'resources/assets/js/receipt.js',
+                    'resources/assets/js/*.js',
                 ],
                 dest: 'public/assets/js/app.js',
             }

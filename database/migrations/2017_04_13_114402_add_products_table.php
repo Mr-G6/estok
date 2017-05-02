@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
@@ -13,11 +14,13 @@ class AddProductsTable extends Migration
     public function up()
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->bigInteger('wh_id');
+            $table->increments('id');
+            $table->integer('inventory_id')->unsigned();
             $table->string('name');
             $table->double('unit_price');
+            $table->double('retail_price');
             $table->integer('quantity');
+            $table->foreign('inventory_id')->references('id')->on('inventory')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -29,8 +32,6 @@ class AddProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->drop();
-        });
+        Schema::dropIfExists('products');
     }
 }

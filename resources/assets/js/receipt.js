@@ -1,345 +1,382 @@
-class Receipt{
-    /**
-     * Get CSRF Token
-     * @returns {*|jQuery}
-     */
-    getToken(){
-        return $(".receipts").attr('data-token');
-    }
+let $receiptDetails = $('.receipt-details'),
+    $deleteReceipt = $('.delete-receipt'),
+    $clearDues = $('.clear-dues'),
+    $salesSearch = $('#sales-search'),
+    $receipts = $('.receipts-table');
 
-    /**
-     * ------------------------
-     * Invoice Details
-     * ------------------------
-     */
-    
-    /**
-     * Get and set Invoice details to Invoice Modal body
-     * @param e
-     */
-    showInvoiceDetails(e){
-        e.preventDefault();
-        var _this = e.data.context,
-            id = $.trim($(this).attr('data-receipt-id')),
-            name = $.trim($(this).attr('data-name'));
+addEventHandler($receiptDetails, {}, 'click', getInvoiceDetails);
+addEventHandler($deleteReceipt, {}, 'click', deleteReceipt);
+addEventHandler($clearDues, {}, 'click', clearDues);
+addEventHandler($salesSearch, {}, 'keyup', salesSearch);
 
-        $.ajax({
-            type : 'GET',
-            url : '/warehouse/sales/byReceiptId',
-            data : {
-                receipt_id : id
+/**
+ * Show receipt transactions
+ * @param e
+ */
+function getInvoiceDetails(e){
+    e.preventDefault();
+    let id = $.trim($(this).attr('data-receipt-id')),
+        name = $.trim($(this).attr('data-name'));
+
+    $.ajax({
+        type : 'GET',
+        url : '/inventory/sales/byReceiptId',
+        data : {
+            receipt_id : id
+        },
+        success : function(transactions){
+            console.log(transactions);
+            if(transactions.length){
+                renderTransactionsItems(transactions, id, name);
+            }
+        }
+    });
+}
+
+/**
+ * Render transactions
+ * @param transactions
+ * @param id
+ * @param name
+ */
+function renderTransactionsItems(transactions, id, name){
+    $.get('/templates/receipt_details.html', function(template) {
+        let rendered = Mustache.render(template,  {
+            transactions: transactions,
+            id : id,
+            name : name,
+            retail_total : getRetailTotal(transactions),
+            unitCost : function(){
+                return this.cost_total / this.quantity;
             },
-            success : function(transactions){
-                if(transactions.length){
-                    _this.setInvoiceModalHeader(id, name);
-                    _this.setInvoicePrintID(id);
-                    _this.appendInvoiceModalTableHeader();
-                    _this.appendInvoiceModalTableBody();
-                    _this.appendItemsToInvoiceModalDOM(transactions);
-                    _this.showInvoiceModal();
-                }
+            date : function(){
+                return moment(this.created_at).format('YYYY-MM-DD')
+            },
+            time : function(){
+                return moment(this.created_at).format('HH:mm:ss a')
             }
         });
-    }
-
-    /**
-     * Set Invoice Details Model Header
-     * @param id
-     * @param name
-     */
-    setInvoiceModalHeader(id, name){
-        $("#receipt-dt-name").text('Buyer : ' + name);
-        $("#receipt-dt-id").text('Receipt id # ' + id);
-    }
-
-    /**
-     * Set Receipt print button id
-     * @param id
-     */
-    setInvoicePrintID(id){
-        $("#print-receipt").attr('href','/print/receipt/'+id);
-    }
-
-    /**
-     * Appends Invoice Modal Table header
-     */
-    appendInvoiceModalTableHeader () {
-        var head_titles = ['Name', 'Quantity', 'Unit Cost', 'Total Retail', 'Date', 'Time'];
-        var $head = `<thead><tr><th>${head_titles.join('</th><th>')}</th></tr></thead>`;
-        $("#receipt-dt-modal .modal-body .table").append($head);
-    }
-
-    /**
-     * Appends Invoice Modal Table body
-     */
-    appendInvoiceModalTableBody () {
-        var $body = `<tbody></tbody>`;
-        $("#receipt-dt-modal .modal-body .table").append($body);
-    }
-
-    /**
-     * Append Items to Invoice Modal
-     * @param transactions
-     */
-    appendItemsToInvoiceModalDOM (transactions) {
-        var retail_total = this.getRetailTotal(transactions);
-        $("#receipt-dt-total").html('<b>Retail  Total</b> : Rs.' + retail_total);
-        transactions.forEach(function (transaction) {
-            var $transaction = [
-                transaction.item_name ,
-                transaction.item_quantity ,
-                transaction.cost_total / transaction.item_quantity,
-                transaction.retail_total,
-                moment(transaction.created_at).format('YYYY-MM-DD'),
-                moment(transaction.created_at).format('HH:mm:ss a')
-            ];
-            var $item = `<tr><td>${$transaction.join('</td><td>')}</td></tr>`;
-            $("#receipt-dt-modal .modal-body .table > tbody").append($item);
+        $('.receipts').append(rendered);
+        addEventHandler("#receipt-dt-modal", {}, 'hidden.bs.modal', function(){
+            $(this).remove();
         });
-    }
-
-    /**
-     * Show Invoice Details Modal
-     */
-    showInvoiceModal(){
         $("#receipt-dt-modal").modal('show');
-    }
+    });
+}
 
-    /**
-     * Remove Invoice Details Modal body
-     */
-    clearInvoiceModalBody(){
-        $("#receipt-dt-modal .modal-body .table").empty();
-    }
+/**
+ * Get transaction total
+ * @param transactions
+ * @returns {number}
+ */
+function getRetailTotal(transactions){
+    var total = 0;
+    transactions.forEach(function (transaction) {
+        total += parseFloat(transaction.retail_total);
+    });
+    return total;
+}
 
-    /**
-     * ---------------------------
-     * Delete Receipt
-     * ---------------------------
-     */
+/**
+ * Delete receipt
+ * @param e
+ */
+function deleteReceipt(e){
+    let id = $(this).attr('data-receipt-id');
 
-    /**
-     * Confirm Receipt Delete
-     * @param e
-     */
-    confirmReceiptDelete(e){
-        var id = $(this).attr('data-receipt-id');
-        $("#delete-receipt").attr('data-receipt-id',id);
-        $("#receipt-delete-modal").modal('show');
-    }
-
-    /**
-     * Delete Receipt
-     * @param e
-     */
-    deleteReceipt(e){
-        var _this = e.data.context,
-            id = $(this).attr('data-receipt-id');
-
-        $.ajax({
-            type : 'POST',
-            url : '/warehouse/sales/delete',
-            data : {
-                receipt_id : id,
-                _token : _this.getToken()
+    bootbox.confirm({
+        message: "Are you sure you want to delete this receipt?",
+        buttons: {
+            confirm: {
+                label: 'Yes',
+                className: 'btn-success'
             },
-            success : function(done){
-                if(done){
-                    _this.removeReceiptFromList(id);
-                }
+            cancel: {
+                label: 'No',
+                className: 'btn-danger'
             }
-        })
-    }
-
-    /**
-     * Remove Receipt item from table
-     * @param id
-     */
-    removeReceiptFromList(id){
-        $(".receipt-list[data-receipt-id='" + id +"']").slideUp('slow');
-    }
-
-    /**
-     *  -----------------------------
-     *  Receipt Search
-     *  -----------------------------
-     */
-
-    /**
-     * Search Receipt by Name or ID
-     * @param e
-     */
-    salesSearch(e){
-        e.preventDefault();
-        var _this = e.data.context,
-            query = $.trim($(this).val()).toLowerCase(),
-            wh_id = $.trim($(this).attr('data-warehouse'));
-
-        _this.errors.clearErrors();
-
-        if(e.which == 13){
-            if(query.length){
-                _this.getReceipts(wh_id, query);
-            }else{
-                _this.errors.add('Product name required!');
-                _this.errors.appendErrorsToDOM();
-                _this.errors.showErrorDOM();
-                _this.showTransactionTable();
-                _this.clearReceiptSearchResults();
+        },
+        callback: function (result) {
+            if(result){
+                $.ajax({
+                    type : 'POST',
+                    url : '/inventory/sales/delete',
+                    data : {
+                        receipt_id : id,
+                        _token : getToken()
+                    },
+                    success : function(done){
+                        if(done){
+                            removeReceiptFromList(id);
+                        }
+                    }
+                })
             }
         }
+    });
+}
 
-        if(e.which == 27){
-            $(this).val('');
-            $(this).blur();
-            _this.clearReceiptSearchResults();
-            _this.errors.hideErrorDOM();
-            _this.showReceiptsTable();
+/**
+ * Delete receipt from view
+ * @param id
+ */
+function removeReceiptFromList(id){
+    $(".receipt-list[data-receipt-id='" + id +"']").slideUp('slow');
+}
+
+/**
+ * Search receipt
+ * @param e
+ */
+function salesSearch(e){
+    e.preventDefault();
+    let query = $.trim($(this).val()).toLowerCase(),
+        inventory_id = $.trim($(this).attr('data-warehouse'));
+
+    errors.clearErrors();
+
+    if(e.which === 13){
+        if(query.length){
+            searchReceipts(inventory_id, query);
+        }else{
+            errors.add('Product name required!');
+            errors.appendErrorsToDOM();
+            errors.showErrorDOM();
+            showReceiptsTable();
+            clearReceiptSearchResults();
         }
     }
 
-    /**
-     * Get Receipts for search
-     * @param wh_id
-     * @param query
-     */
-    getReceipts(wh_id, query){
-        this.clearReceiptSearchResults();
-
-        var _this = this;
-        $.ajax({
-            type : 'GET',
-            url : '/warehouse/sales/byReceiptIdOrName',
-            data : {
-                wh_id : wh_id,
-                query : query
-            },
-            success : function(res){
-                if (res.length) {
-                    _this.hideReceiptsTable();
-                    _this.appendReceiptSearchTableHeader();
-                    _this.appendReceiptSearchItemsToDOM(res);
-                    _this.attachReceiptSearchTableHandlers();
-                } else {
-                    _this.errors.add('No Receipts found with this id or name.');
-                    _this.errors.appendErrorsToDOM();
-                    _this.errors.showErrorDOM();
-                    _this.clearReceiptSearchResults();
-                    _this.showReceiptsTable();
-                }
-            }
-        })
-    }
-
-    /**
-     * Hide Receipts Table
-     */
-    hideReceiptsTable() {
-        $(".receipts-table").slideUp();
-    }
-
-    /**
-     * Show Receipts Table
-     */
-    showReceiptsTable() {
-        $(".receipts-table").slideDown();
-    }
-
-    /**
-     *  Bind/Unbind Receipt Search results table rows action handlers
-     */
-    attachReceiptSearchTableHandlers(){
-        $(".receipt-details").unbind('click');
-        $(".delete-receipt").unbind('click');
-        $("#delete-receipt").unbind('click');
-
-        $(".receipt-details").on('click', {context : this} , this.showInvoiceDetails);
-        $(".delete-receipt").on('click', {context : this} , this.confirmReceiptDelete);
-        $("#delete-receipt").on('click', {context : this} , this.deleteReceipt);
-    }
-
-    /**
-     * Return Receipt sales total
-     * @param transactions
-     * @returns {number}
-     */
-    getRetailTotal(transactions){
-        var total = 0;
-        transactions.forEach(function (transaction) {
-            total += parseFloat(transaction.retail_total);
-        });
-        return total;
-    }
-
-    /**
-     * Append Receipt search table headers
-     */
-    appendReceiptSearchTableHeader () {
-        var head_titles = ['ID', 'Name', 'Address', 'Phone No', 'Items', 'Retail', 'Cost', 'Profit', 'Date', 'Time'];
-        var $head = `<thead><tr><th>${head_titles.join('</th><th>')}</th></tr></thead>`;
-        $("#receipts-lists").append($head);
-    }
-
-    /**
-     * Append Receipt Search results to DOM
-     * @param receipts
-     */
-    appendReceiptSearchItemsToDOM(receipts) {
-        receipts.forEach(function (receipt) {
-            var $receipt = [
-                receipt.id,
-                receipt.name,
-                receipt.address,
-                receipt.phone_no,
-                receipt.total_items,
-                receipt.total_retail,
-                receipt.cost_total,
-                receipt.profit,
-                moment(receipt.created_at).format('YYYY-MM-DD'),
-                moment(receipt.created_at).format('HH:mm:ss a')
-            ];
-            var $item    = `<td>${$receipt.join('</td><td>')}</td>`;
-            var $actions = `<td>
-                                <div class="btn-group pull-right" role="group" aria-label="...">
-                                    <a class="receipt-details" data-receipt-id="${receipt.id}" data-name="${receipt.name}" href="#">
-                                        <button type="button" class="btn btn-default">
-                                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Details
-                                        </button>
-
-                                        <a class="delete-receipt" data-receipt-id="${receipt.id}" href="#">
-                                            <button type="button" class="btn btn-default">
-                                                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete
-                                            </button>
-                                        </a>
-                                    </a>
-                                </div>
-                            </td>`;
-            $("#receipts-lists").append(`<tbody><tr>${$item}${$actions}</tr></tbody>`);
-        });
-    }
-
-    /**
-     * Clear Receipt search results table
-     */
-    clearReceiptSearchResults () {
-        $("#receipts-lists").html('');
-        $("#receipts-lists").parent('.table-responsive').find('.panel').remove();
-    }
-
-    constructor(){
-        this.errors = new Errors('#receipt_error');
-
-        // Receipt/Invoice Details
-        $(".receipt-details").on('click', {context : this} , this.showInvoiceDetails);
-        $('#receipt-dt-modal').on('hidden.bs.modal', {context :this }, this.clearInvoiceModalBody);
-
-        // Delete Receipt
-        $(".delete-receipt").on('click', {context : this} , this.confirmReceiptDelete);
-        $("#delete-receipt").on('click', {context : this} , this.deleteReceipt);
-
-        // Search Receipts
-        $("#sales-search").on('keyup', {context : this}, this.salesSearch);
+    if(e.which === 27){
+        $(this).val('');
+        $(this).blur();
+        clearReceiptSearchResults();
+        errors.hideErrorDOM();
+        showReceiptsTable();
     }
 }
 
-var receipts = new Receipt();
+/**
+ * Get receipt search results
+ * @param inventory_id
+ * @param query
+ */
+function searchReceipts(inventory_id, query){
+    clearReceiptSearchResults();
+
+    $.ajax({
+        type : 'GET',
+        url : '/inventory/sales/byReceiptIdOrName',
+        data : {
+            inventory_id : inventory_id,
+            query : query
+        },
+        success : function(receipts){
+            if (receipts.length) {
+                hideReceiptsTable();
+                renderSearchReceipts(receipts);
+            } else {
+                errors.add('No Receipts found with this id or name.');
+                errors.appendErrorsToDOM();
+                errors.showErrorDOM();
+                clearReceiptSearchResults();
+                showReceiptsTable();
+            }
+        }
+    })
+}
+
+/**
+ * Hide receipts table
+ */
+function hideReceiptsTable() {
+    $($receipts).slideUp();
+}
+
+/**
+ * Show receipts table
+ */
+function showReceiptsTable() {
+    $($receipts).slideDown();
+}
+
+/**
+ * Register receipt search results event handlers
+ */
+function registerSearchResultsHandlers(){
+    removeEventHandler('.receipt-details', 'click');
+    removeEventHandler('.delete-receipt', 'click');
+
+    addEventHandler('.receipt-details', {}, 'click', getInvoiceDetails);
+    addEventHandler('.delete-receipt', {}, 'click', deleteReceipt);
+}
+
+/**
+ * Render receipt search results
+ * @param receipts
+ */
+function renderSearchReceipts(receipts){
+    $.get('/templates/receipts_search.html', function(template) {
+        let rendered = Mustache.render(template,  {
+            receipts: receipts,
+            date : function(){
+                return moment(this.created_at).format('YYYY-MM-DD')
+            },
+            time : function(){
+                return moment(this.created_at).format('HH:mm:ss a')
+            }
+        });
+        $('.receipts').append(rendered);
+        registerSearchResultsHandlers();
+    });
+}
+
+/**
+ * Remove receipt search results
+ */
+function clearReceiptSearchResults () {
+    $(".receipt-search-results").remove();
+}
+
+/**
+ * Clear receipt dues
+ * @param e
+ */
+function clearDues(e) {
+    let id = $(this).attr('data-id');
+
+    $.get('/inventory/sales/receipt', {
+        id : id
+    }, function(receipt){
+        console.log(receipt);
+        $.get('/templates/dues.html', function(template) {
+            var rendered = Mustache.render(template, {
+                id : receipt.id,
+                name : receipt.name,
+                address : receipt.address,
+                number : receipt.phone_no,
+                due : receipt.unpaid
+            });
+            $('.receipts').append(rendered);
+            addEventHandler('#clear-dues', {}, 'hidden.bs.modal', function(){
+                $(this).remove();
+            });
+            addEventHandler('#clear-partial', {}, 'click', clearPartialDues);
+            addEventHandler('#clear-all-dues', {}, 'click', clearAllDues);
+            addEventHandler('#due-amount', {}, 'keypress', function(){
+                $(this).attr('placeholder', 'Enter Amount');
+            })
+            $("#clear-dues").modal('show');
+        });
+    });
+}
+
+/**
+ * Clear partial dues
+ * @param e
+ */
+function clearPartialDues(e){
+    let receipt_id = $(this).attr('data-receipt-id'),
+        due = parseFloat($.trim($(this).attr('data-due'))),
+        clear_amount = parseFloat($.trim($('#due-amount').val()));
+
+    if( isNumeric(clear_amount) &&
+        isAPositiveNumber(clear_amount) &&
+        clear_amount <= due &&
+        clear_amount > 0
+    ){
+        if(clear_amount === due){
+            $('#clear-all-dues').click();
+        }else{
+            $('#clear-dues').modal('toggle');
+            bootbox.confirm({
+                message: `Are you sure you want to clear Rs. ${clear_amount} from this receipt?`,
+                buttons: {
+                    confirm: {
+                        label: 'Yes',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'No',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    if(result){
+                        $.ajax({
+                            type : 'POST',
+                            url  : '/inventory/clear/sales/partial',
+                            data : {
+                                id : receipt_id,
+                                amount : clear_amount,
+                                _token : getToken()
+                            },
+                            success : function(done){
+                                if(done){
+                                    bootbox.alert(
+                                        `Rs. ${clear_amount} has been cleared from receipt`
+                                    );
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    }else{
+        $('#due-amount').val('').attr('placeholder','Invalid Amount');
+    }
+    console.log(receipt_id, due);
+}
+
+
+/**
+ * Clear all dues
+ * @param e
+ */
+function clearAllDues(e){
+    let receipt_id = $(this).attr('data-receipt-id');
+    console.log(receipt_id);
+
+    $('#clear-dues').modal('toggle');
+
+    bootbox.confirm({
+        message: "Are you sure you want to clear dues for this receipt?",
+        buttons: {
+            confirm: {
+                label: 'Yes',
+                className: 'btn-success'
+            },
+            cancel: {
+                label: 'No',
+                className: 'btn-danger'
+            }
+        },
+        callback: function (result) {
+            if(result){
+                $.ajax({
+                    type : 'POST',
+                    url  : '/inventory/clear/sales',
+                    data : {
+                        id : receipt_id,
+                        _token : getToken()
+                    },
+                    success : function(done){
+                        if(done){
+                            markReceiptAsPaid(receipt_id);
+                        }
+                    }
+                });
+            }
+        }
+    });
+}
+
+/**
+ * Mark receipt as paid
+ * @param id
+ */
+function markReceiptAsPaid(id){
+    $(".receipt-list[data-receipt-id='" + id +"']").removeClass('unpaid')
+        .find('.pay-status').html('Paid');
+}

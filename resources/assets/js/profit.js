@@ -74,14 +74,14 @@ class Transactions{
      * GET Products by Date
      * @param from
      * @param to
-     * @param wh_id
+     * @param inventory_id
      */
-    getTransactions(from, to, wh_id) {
+    getTransactions(from, to, inventory_id) {
         this.clearProductSearchTable();
         var _this = this;
         $.ajax({
             type: 'GET',
-            url: '/warehouse/' + wh_id + '/profit/byDate',
+            url: '/inventory/' + inventory_id + '/profit/byDate',
             data: {
                 from: from,
                 to: to
@@ -115,7 +115,7 @@ class Transactions{
             total_retail = 0,
             total_profit = 0;
         transactions.forEach(function (transaction) {
-            total_products += parseInt(transaction.item_quantity);
+            total_products += parseInt(transaction.quantity);
             total_cost += parseFloat(transaction.cost_total);
             total_retail += parseFloat(transaction.retail_total);
             total_profit += parseFloat(transaction.retail_total) - parseFloat(transaction.cost_total);
@@ -194,7 +194,6 @@ class Transactions{
                 _this.errors.add('Product name required!');
                 _this.errors.appendErrorsToDOM();
                 _this.errors.showErrorDOM();
-                _this.showTransactionTable();
                 _this.clearProductSearchTable();
             }
         }
@@ -215,10 +214,10 @@ class Transactions{
     getTransactionsByName(name) {
         this.clearProductSearchTable();
         var _this = this,
-            wh_id = this.getWareHouseID();
+            inventory_id = this.getWareHouseID();
         $.ajax({
             type: 'GET',
-            url: '/warehouse/' + wh_id + '/profit/byName',
+            url: '/inventory/' + inventory_id + '/profit/byName',
             data: {
                 name : name
             },
@@ -273,8 +272,8 @@ class Transactions{
         transactions.forEach(function (transaction) {
             var $transaction = [
                 transaction.id,
-                transaction.item_name,
-                transaction.item_quantity,
+                transaction.product_name,
+                transaction.quantity,
                 transaction.cost_total,
                 transaction.retail_total,
                 transaction.retail_total - transaction.cost_total,

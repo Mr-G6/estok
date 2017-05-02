@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
@@ -14,14 +15,16 @@ class CreateTransactionsTable extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('receipt_id');
-            $table->integer('wh_id');
-            $table->string('item_name');
-            $table->integer('item_quantity');
+            $table->integer('receipt_id')->unsigned();
+            $table->integer('inventory_id')->unsigned();
+            $table->string('product_name');
+            $table->integer('quantity');
             $table->double('retail_price');
             $table->double('unit_price');
             $table->double('retail_total');
             $table->double('cost_total');
+            $table->foreign('receipt_id')->references('id')->on('receipts')->onDelete('cascade');
+            $table->foreign('inventory_id')->references('id')->on('inventory')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -33,6 +36,6 @@ class CreateTransactionsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('transactions');
+        Schema::dropIfExists('transactions');
     }
 }

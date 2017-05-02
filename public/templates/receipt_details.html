@@ -1,0 +1,84 @@
+<div class="modal fade" id="receipt-dt-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <div class="header-data">
+                    <h3 class="modal-title">Sales Invoice</h3>
+                    <h4>Receipt id # {{id}}</h4>
+                    <h4>Buyer : {{name}}</h4>
+                </div>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>
+                                Name
+                            </th>
+
+                            <th>
+                                Quantity
+                            </th>
+
+                            <th>
+                                Unit Cost
+                            </th>
+
+                            <th>
+                                Total Retail
+                            </th>
+
+                            <th>
+                                Date
+                            </th>
+
+                            <th>
+                                Time
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    {{#transactions}}
+                    <tr>
+                        <td>
+                            {{product_name}}
+                        </td>
+
+                        <td>
+                            {{quantity}}
+                        </td>
+
+                        <td>
+                            {{unitCost}}
+                        </td>
+
+                        <td>
+                            {{retail_total}}
+                        </td>
+
+                        <td>
+                            {{date}}
+                        </td>
+
+                        <td>
+                            {{time}}
+                        </td>
+                    </tr>
+                    {{/transactions}}
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <span class="pull-left" style="font-size: 16px;">
+                    <b>Retail Total : Rs. {{retail_total}}</b>
+                </span>
+                <a target="_blank" href="/print/receipt/{{id}}" id="print-receipt">
+                    <button type="button" class="btn btn-default">Print</button>
+                </a>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
